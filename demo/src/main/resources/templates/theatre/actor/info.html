@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+		info
+		<p th:text="${test}"></p>
+		<table>
+			<tr th:each="item : ${list}">
+				<td th:text="${item.actor_id}"></td>
+				<td th:text="${item.first_name}"></td>
+				<td th:text="${item.last_name}"></td>
+				<td th:text="${item.last_update}"></td>
+			</tr>
+		</table>
+</body>
+</html>

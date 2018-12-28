@@ -1,0 +1,7 @@
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations:
+  - classpath*:com/example/**/mapper/xml/*.xml
+  type-aliases-package: classpath*:com/example/**/entity;
