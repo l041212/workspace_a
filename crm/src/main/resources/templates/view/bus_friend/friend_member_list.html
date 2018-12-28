@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta charset="UTF-8"/>
+	    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+	    <link rel="stylesheet" th:href="@{/plugins/bootstrapTable/css/bootstrap-table.min.css}"/>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}"/>	    
+	    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}"  class="ace-main-stylesheet" id="main-ace-style"/>
+	    <link rel="stylesheet" th:href="@{/plugins/bootstrapZtree/css/bootstrapStyle.css}" >
+	    <link rel="stylesheet" th:href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}">
+	    <script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+		<script th:src="@{/js/bootstrap.min.js}"></script>
+    	<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.core.js}"></script>
+    	<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.excheck.js}"></script>
+		<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.exedit.js}"></script>
+		<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table.min.js}"></script>
+		<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table-zh-CN.min.js}"></script>
+		<script th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js}"></script>
+		<script th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js}"></script>
+		<script th:src="@{/plugins/fileInput/elements.fileinput.js}"></script>
+		<script th:src="@{/plugins/tips/jquery.tips.js}"></script>
+		<script th:src="@{/js/ace/ace.min.js}"></script>
+		<script th:src="@{/js/bootbox.js}"></script>
+		<script th:src="@{/js/bus_friend/dump.js}"></script>
+		<script th:src="@{/js/bus_friend/friend_member_list.js}"></script>
+	</head>
+	<body class="no-skin">
+		<div class="main-content">
+		    <div class="main-content-inner">
+		        <div class="page-content">
+		            <div class="row">
+		                <div class="col-xs-12">
+		                    <div style="padding: 0px 10px 0px;">
+		                        <div id="friendMemberToolbar" >
+		                            <button id="saveBtn" class="btn btn-white btn-default btn-round"
+		                            onclick="saveEntity('', '会员新增', '/friendMember')">
+		                                <i class="ace-icon fa fa-plus blue"></i>新增
+		                            </button>
+		                            <button id="impBtn" class="btn btn-white btn-default btn-round"
+		                            data-toggle="modal" data-target="#impModal">
+		                                <i class="ace-icon fa fa-upload blue"></i>导入
+		                            </button>
+		                            <button id="expBtn" class="btn btn-white btn-default btn-round">
+		                                <i class="ace-icon fa fa-download blue"></i>导出
+		                            </button>
+		                            <input name="typeId">     
+		                        </div>
+		                        <table id="friendMemberTable"></table>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>	
+	</body>
+</html>

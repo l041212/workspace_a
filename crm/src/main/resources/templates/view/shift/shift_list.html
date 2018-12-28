@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta charset="UTF-8"/>
+	    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+	    <link rel="stylesheet" th:href="@{/plugins/bootstrapTable/css/bootstrap-table.min.css}"/>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}"/>
+	    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}"  class="ace-main-stylesheet" id="main-ace-style"/>
+	    <script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+		<script th:src="@{/js/bootstrap.min.js}"></script>
+		<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table.min.js}"></script>
+		<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table-zh-CN.min.js}"></script>
+		<script th:src="@{/js/bootbox.js}"></script>
+		<script th:src="@{/js/bus_friend/dump.js}"></script>
+		<script th:src="@{/js/shift/shift_list.js}"></script>
+	</head>
+	<body class="no-skin">
+		<div class="main-content">
+		    <div class="main-content-inner">
+		        <div class="page-content">
+		            <div class="row">
+		                <div class="col-xs-12">
+		                    <div style="padding: 0px 10px 0px;">
+		                        <div id="shiftToolbar" >
+		                            <button class="btn btn-white btn-default btn-round" onclick="saveEntity('', '新增班次', './shift')">
+		                                <i class="ace-icon fa fa-plus blue"></i>新增班次
+		                            </button>
+		                        </div>
+		                        <table id="shiftTable"></table>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>	
+	</body>
+</html>

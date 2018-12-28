@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zh.crm.mapper.TypeMapper">
+  <resultMap id="BaseResultMap" type="com.zh.crm.entity.Type">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="text" jdbcType="VARCHAR" property="text" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="parentId" jdbcType="INTEGER" property="parentId" />
+    <result column="parentName" jdbcType="VARCHAR" property="parentName" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, text, value, title, parentId, parentName, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_type
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_type
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zh.crm.entity.Type">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_type (text, value, title, 
+      parentId, parentName)
+    values (#{text,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{parentName,jdbcType=VARCHAR}),#{status,jdbcType=INTEGER}
+  </insert>
+  <insert id="insertSelective" parameterType="com.zh.crm.entity.Type">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="text != null">
+        text,
+      </if>
+      <if test="value != null">
+        value,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="parentId != null">
+        parentId,
+      </if>
+      <if test="parentName != null">
+        parentName,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="text != null">
+        #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null">
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="parentName != null">
+        #{parentName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zh.crm.entity.Type">
+    update sys_type
+    <set>
+      <if test="text != null">
+        text = #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null">
+        value = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parentId = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="parentName != null">
+        parentName = #{parentName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zh.crm.entity.Type">
+    update sys_type
+    set text = #{text,jdbcType=VARCHAR},
+      value = #{value,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      parentId = #{parentId,jdbcType=INTEGER},
+      parentName = #{parentName,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+    where id = #{id,jdbcType=INTEGER}
+
+  </update>
+
+  <!--查询所有类型-->
+  <select id="findAllType" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_type
+  </select>
+
+  <!--分页按父类id查询所有子及元素-->
+  <select id="findTypeByParentId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_type
+    where parentId = #{parentId,jdbcType=INTEGER}
+     <if test="keywords != null and keywords != ''">
+       and(
+         text like CONCAT(CONCAT('%', #{keywords}),'%')
+          )
+     </if>
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+
+  <!--不分页查询所有选项-->
+  <select id="findAllTypeByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_type
+    where parentId = #{parentId,jdbcType=INTEGER}
+  </select>
+
+  <!--查询数据库的此选项的最大值，用户自动生成自动生成值-->
+  <select id="findMaxValueByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select max(value)
+    from sys_type
+    where parentId = #{parentId,jdbcType=INTEGER}
+  </select>
+
+  <!--查询选项是否存在-->
+  <select id="findTypeExist" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(text) from sys_type
+    where text = #{text,jdbcType=VARCHAR} and parentId = #{parentId,jdbcType=INTEGER}
+  </select>
+
+  <!--查询所有有效的子类型-->
+  <select id="findAllValidType"  parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_type
+    where parentId = #{parentId,jdbcType=INTEGER} and status=0
+  </select>
+
+  <!--查询所有有效的类型-->
+  <select id="findValidType"   resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_type
+    where status=0 and parentName = '13'
+  </select>
+</mapper>

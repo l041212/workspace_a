@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zh.crm.mapper.KnowMapper">
+  <resultMap id="BaseResultMap" type="com.zh.crm.entity.Know">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="knowTitle" jdbcType="VARCHAR" property="knowTitle" />
+    <result column="knowType" jdbcType="VARCHAR" property="knowType" />
+    <result column="knowTag" jdbcType="VARCHAR" property="knowTag" />
+    <result column="knowRelationId" jdbcType="INTEGER" property="knowRelationId" />
+    <result column="knowTypeId" jdbcType="INTEGER" property="knowTypeId" />
+    <result column="knowFileIds" jdbcType="VARCHAR" property="knowFileIds" />
+    <result column="createDate" jdbcType="VARCHAR" property="createDate" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="knowFileNames" jdbcType="VARCHAR" property="knowFileNames" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="publish" jdbcType="INTEGER" property="publish" />
+    <result column="editPerm" jdbcType="INTEGER" property="editPerm" />
+    <result column="readPerm" jdbcType="INTEGER" property="readPerm" />
+    <result column="publishDepIds" jdbcType="VARCHAR" property="publishDepIds" />
+    <result column="editRoleIds" jdbcType="VARCHAR" property="editRoleIds" />
+    <result column="readRoleIds" jdbcType="VARCHAR" property="readRoleIds" />
+    <result column="readCount" jdbcType="INTEGER" property="readCount" />
+    <result column="goodCount" jdbcType="INTEGER" property="goodCount" />
+    <result column="badCount" jdbcType="INTEGER" property="badCount" />
+    <result column="resultType" jdbcType="INTEGER" property="resultType" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="pastId" jdbcType="INTEGER" property="pastId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zh.crm.entity.KnowWithBLOBs">
+    <result column="konwContent" jdbcType="LONGVARCHAR" property="konwContent" />
+    <result column="knowImg" jdbcType="LONGVARCHAR" property="knowImg" />
+    <result column="knowContentTxt" jdbcType="LONGVARCHAR" property="knowContentTxt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, knowTitle, knowType, knowTag, knowRelationId, knowTypeId, knowFileIds,createDate,creater,knowFileNames,status,
+    publish,editPerm,readPerm,publishDepIds,editRoleIds,readRoleIds,readCount,goodCount,badCount,resultType,
+    version,pastId,remark
+  </sql>
+  <sql id="Blob_Column_List">
+    konwContent, knowImg,knowContentTxt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from kw_knowledge
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from kw_knowledge
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zh.crm.entity.KnowWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into kw_knowledge (knowTitle, knowType, knowTag, 
+      knowRelationId, knowTypeId, knowFileIds, 
+      konwContent, knowImg,createDate,creater,knowFileNames,status,
+      publish,editPerm,readPerm,publishDepIds,editRoleIds,readRoleIds,readCount,
+      knowContentTxt,goodCount,badCount,resultType,version,pastId,remark)
+    values (#{knowTitle,jdbcType=VARCHAR}, #{knowType,jdbcType=VARCHAR}, #{knowTag,jdbcType=VARCHAR}, 
+      #{knowRelationId,jdbcType=INTEGER}, #{knowTypeId,jdbcType=INTEGER}, #{knowFileIds,jdbcType=VARCHAR}, 
+      #{konwContent,jdbcType=LONGVARCHAR}, #{knowImg,jdbcType=LONGVARCHAR},#{createDate,jdbcType=VARCHAR},
+      #{creater,jdbcType=VARCHAR},#{knowFileNames,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
+      #{publish,jdbcType=INTEGER}, #{editPerm,jdbcType=INTEGER},#{readPerm,jdbcType=INTEGER},
+      #{publishDepIds,jdbcType=VARCHAR}, #{editRoleIds,jdbcType=VARCHAR}, #{readRoleIds,jdbcType=VARCHAR},
+      #{readCount,jdbcType=INTEGER},#{knowContentTxt,jdbcType=LONGVARCHAR},#{goodCount,jdbcType=INTEGER},
+      #{badCount,jdbcType=INTEGER},#{resultType,jdbcType=INTEGER},#{version,jdbcType=INTEGER},#{pastId,jdbcType=INTEGER},
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zh.crm.entity.KnowWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into kw_knowledge
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="knowTitle != null">
+        knowTitle,
+      </if>
+      <if test="knowType != null">
+        knowType,
+      </if>
+      <if test="knowTag != null">
+        knowTag,
+      </if>
+      <if test="knowRelationId != null">
+        knowRelationId,
+      </if>
+      <if test="knowTypeId != null">
+        knowTypeId,
+      </if>
+      <if test="knowFileIds != null">
+        knowFileIds,
+      </if>
+      <if test="konwContent != null">
+        konwContent,
+      </if>
+      <if test="knowImg != null">
+        knowImg,
+      </if>
+      <if test="createDate != null">
+        createDate,
+      </if>
+      <if test="creater != null">
+        creater,
+      </if>
+      <if test="knowFileNames != null">
+        knowFileNames,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="publish != null">
+        publish,
+      </if>
+      <if test="editPerm != null">
+        editPerm,
+      </if>
+      <if test="readPerm != null">
+        readPerm,
+      </if>
+      <if test="publishDepIds != null">
+        publishDepIds,
+      </if>
+      <if test="editRoleIds != null">
+        editRoleIds,
+      </if>
+      <if test="readRoleIds != null">
+        readRoleIds,
+      </if>
+      <if test="readCount != null">
+        readCount,
+      </if>
+      <if test="knowContentTxt != null">
+        knowContentTxt,
+      </if>
+      <if test="goodCount != null">
+        goodCount,
+      </if>
+      <if test="badCount != null">
+        badCount,
+      </if>
+      <if test="resultType != null">
+        resultType,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="pastId != null">
+        pastId,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="knowTitle != null">
+        #{knowTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="knowType != null">
+        #{knowType,jdbcType=VARCHAR},
+      </if>
+      <if test="knowTag != null">
+        #{knowTag,jdbcType=VARCHAR},
+      </if>
+      <if test="knowRelationId != null">
+        #{knowRelationId,jdbcType=INTEGER},
+      </if>
+      <if test="knowTypeId != null">
+        #{knowTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="knowFileIds != null">
+        #{knowFileIds,jdbcType=VARCHAR},
+      </if>
+      <if test="konwContent != null">
+        #{konwContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="knowImg != null">
+        #{knowImg,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=VARCHAR},
+      </if>
+      <if test="creater != null">
+        #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="knowFileNames != null">
+        #{knowFileNames,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="publish != null">
+        #{publish,jdbcType=INTEGER},
+      </if>
+      <if test="editPerm != null">
+        #{editPerm,jdbcType=INTEGER},
+      </if>
+      <if test="readPerm != null">
+        #{readPerm,jdbcType=INTEGER},
+      </if>
+      <if test="publishDepIds != null">
+        #{publishDepIds,jdbcType=VARCHAR},
+      </if>
+      <if test="editRoleIds != null">
+        #{editRoleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="readRoleIds != null">
+        #{readRoleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="readCount != null">
+        #{readCount,jdbcType=INTEGER},
+      </if>
+      <if test="knowContentTxt != null">
+        #{knowContentTxt,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="goodCount != null">
+        #{goodCount,jdbcType=INTEGER},
+      </if>
+      <if test="badCount != null">
+        #{badCount,jdbcType=INTEGER},
+      </if>
+      <if test="resultType != null">
+        #{resultType,jdbcType=INTEGER},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="pastId != null">
+        #{pastId,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zh.crm.entity.KnowWithBLOBs">
+    update kw_knowledge
+    <set>
+      <if test="knowTitle != null">
+        knowTitle = #{knowTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="knowType != null">
+        knowType = #{knowType,jdbcType=VARCHAR},
+      </if>
+      <if test="knowTag != null">
+        knowTag = #{knowTag,jdbcType=VARCHAR},
+      </if>
+      <if test="knowRelationId != null">
+        knowRelationId = #{knowRelationId,jdbcType=INTEGER},
+      </if>
+      <if test="knowTypeId != null">
+        knowTypeId = #{knowTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="knowFileIds != null">
+        knowFileIds = #{knowFileIds,jdbcType=VARCHAR},
+      </if>
+      <if test="konwContent != null">
+        konwContent = #{konwContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="knowImg != null">
+        knowImg = #{knowImg,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="createDate != null">
+        createDate = #{createDate,jdbcType=VARCHAR},
+      </if>
+      <if test="creater != null">
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="knowFileNames != null">
+        knowFileNames = #{knowFileNames,jdbcType=VARCHAR},
+      </if>
+      <if test="publish != null">
+        publish = #{publish,jdbcType=INTEGER},
+      </if>
+      <if test="editPerm != null">
+        editPerm = #{editPerm,jdbcType=INTEGER},
+      </if>
+      <if test="readPerm != null">
+        readPerm = #{readPerm,jdbcType=INTEGER},
+      </if>
+      <if test="publishDepIds != null">
+        publishDepIds = #{publishDepIds,jdbcType=VARCHAR},
+      </if>
+      <if test="editRoleIds != null">
+        editRoleIds = #{editRoleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="readRoleIds != null">
+        readRoleIds = #{readRoleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="readCount != null">
+        readCount = #{readCount,jdbcType=INTEGER},
+      </if>
+      <if test="knowContentTxt != null">
+        knowContentTxt = #{knowContentTxt,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="goodCount != null">
+        goodCount = #{goodCount,jdbcType=INTEGER},
+      </if>
+      <if test="badCount != null">
+        badCount = #{badCount,jdbcType=INTEGER},
+      </if>
+      <if test="resultType != null">
+        resultType = #{resultType,jdbcType=INTEGER},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="pastId != null">
+        pastId = #{pastId,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zh.crm.entity.KnowWithBLOBs">
+    update kw_knowledge
+    set knowTitle = #{knowTitle,jdbcType=VARCHAR},
+      knowType = #{knowType,jdbcType=VARCHAR},
+      knowTag = #{knowTag,jdbcType=VARCHAR},
+      knowRelationId = #{knowRelationId,jdbcType=INTEGER},
+      knowTypeId = #{knowTypeId,jdbcType=INTEGER},
+      knowFileIds = #{knowFileIds,jdbcType=VARCHAR},
+      konwContent = #{konwContent,jdbcType=LONGVARCHAR},
+      knowImg = #{knowImg,jdbcType=LONGVARCHAR},
+      createDate = #{createDate,jdbcType=VARCHAR},
+      creater = #{creater,jdbcType=VARCHAR},
+      knowFileNames = #{knowFileNames,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      publish = #{publish,jdbcType=INTEGER},
+      editPerm = #{editPerm,jdbcType=INTEGER},
+      readPerm = #{readPerm,jdbcType=INTEGER},
+      publishDepIds = #{publishDepIds,jdbcType=VARCHAR},
+      editRoleIds = #{editRoleIds,jdbcType=VARCHAR},
+      readRoleIds = #{readRoleIds,jdbcType=VARCHAR},
+      readCount = #{readCount,jdbcType=INTEGER},
+      knowContentTxt = #{knowContentTxt,jdbcType=LONGVARCHAR},
+      goodCount = #{goodCount,jdbcType=INTEGER},
+      badCount = #{badCount,jdbcType=INTEGER},
+      resultType = #{resultType,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      pastId = #{pastId,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zh.crm.entity.Know">
+    update kw_knowledge
+    set knowTitle = #{knowTitle,jdbcType=VARCHAR},
+      knowType = #{knowType,jdbcType=VARCHAR},
+      knowTag = #{knowTag,jdbcType=VARCHAR},
+      knowRelationId = #{knowRelationId,jdbcType=INTEGER},
+      knowTypeId = #{knowTypeId,jdbcType=INTEGER},
+      knowFileIds = #{knowFileIds,jdbcType=VARCHAR},
+      createDate = #{createDate,jdbcType=VARCHAR},
+      creater = #{creater,jdbcType=VARCHAR},
+      knowFileNames = #{knowFileNames,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      publish = #{publish,jdbcType=INTEGER},
+      editPerm = #{editPerm,jdbcType=INTEGER},
+      readPerm = #{readPerm,jdbcType=INTEGER},
+      publishDepIds = #{publishDepIds,jdbcType=VARCHAR},
+      editRoleIds = #{editRoleIds,jdbcType=VARCHAR},
+      readRoleIds = #{readRoleIds,jdbcType=VARCHAR},
+      readCount = #{readCount,jdbcType=VARCHAR},
+      goodCount = #{goodCount,jdbcType=VARCHAR},
+      badCount = #{badCount,jdbcType=VARCHAR},
+      resultType = #{resultType,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      pastId = #{pastId,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--查询我关注的最新的三条知识-->
+  <select id="findKnowTopThree" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    kk.id,kk.knowTitle,left(kk.knowContentTxt, 40) as knowContentTxt ,knowImg,readCount
+    from kw_knowledge kk left join kw_collect kc on kk.id = kc.knowId
+    where kk.resultType = 1 and kc.number =#{number}
+    order by createDate desc LIMIT 3
+  </select>
+  <!--更改知识版本-->
+  <update id="updateVersionByPastId" parameterType="java.lang.Integer">
+    update kw_knowledge set version = 0 where pastId = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--查询前10条热门知识（阅读量最多）-->
+  <select id="findHotKnow" resultMap="BaseResultMap">
+    SELECT
+	kc.knowId as id,
+	sum(kc.readCount) AS readCount,
+	kk.knowTitle FROM kw_know_count kc
+    LEFT JOIN kw_knowledge kk ON kc.knowId = kk.id
+    WHERE kc.readCount = 1 GROUP BY knowId
+    ORDER BY readCount DESC LIMIT 10
+  </select>
+
+  <!--查询最新的10条知识-->
+  <select id="findNewKnow" resultMap="ResultMapWithBLOBs">
+    select id,knowTitle,left(knowContentTxt, 40) as knowContentTxt,knowImg,
+    knowTag,knowType,createDate,creater,goodCount,readCount,badCount,updateDate,
+    updater,readPerm,readRoleIds from kw_knowledge  ORDER BY createDate DESC LIMIT 10
+  </select>
+
+  <!--更改知识的阅读权限为所有人-->
+  <update id="updateKnowReadPerm" parameterType="java.lang.Integer">
+    update kw_knowledge
+    set readPerm = 0 ,readRoleIds=''
+    where id=#{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="findKnowCountByTypeId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT count(id) from kw_knowledge where knowTypeId = #{typeId,jdbcType=INTEGER}
+  </select>
+
+  <!--按照创建时间/类型搜索知识-->
+  <select id="findKnowSortDate" parameterType="java.util.Map" resultMap="ResultMapWithBLOBs">
+    select id,knowTitle,left(knowContentTxt, 40) as knowContentTxt,knowImg,
+    knowTag,knowType,createDate,creater,goodCount,readCount,badCount,updateDate,
+    updater,readPerm,readRoleIds from kw_knowledge
+    where 1=1
+    <if test="typeId != null and typeId != ''">
+      and knowTypeId = #{typeId}
+    </if>
+    ORDER BY createDate
+    <if test="sort != null and sort != ''">
+      ${sort}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zh.crm.mapper.PermissionMapper">
+  <resultMap id="BaseResultMap" type="com.zh.crm.entity.Permission">
+    <id column="permissionId" jdbcType="INTEGER" property="permissionId" />
+    <result column="permissionName" jdbcType="VARCHAR" property="permissionName" />
+    <result column="parentId" jdbcType="INTEGER" property="parentId" />
+    <result column="permission" jdbcType="VARCHAR" property="permission" />
+    <result column="permissionType" jdbcType="INTEGER" property="permissionType" />
+    <result column="permissionUrl" jdbcType="VARCHAR" property="permissionUrl" />
+    <result column="permissionOrder" jdbcType="INTEGER" property="permissionOrder" />
+    <result column="permissionIcon" jdbcType="VARCHAR" property="permissionIcon" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    permissionId, permissionName, parentId, permission, permissionType, permissionUrl, 
+    permissionOrder, permissionIcon
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_permission
+    where permissionId = #{permissionId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_permission
+    where permissionId = #{permissionId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zh.crm.entity.Permission">
+    <selectKey keyProperty="permissionId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_permission (permissionName, parentId, permission, 
+      permissionType, permissionUrl, permissionOrder, 
+      permissionIcon)
+    values (#{permissionName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{permission,jdbcType=VARCHAR}, 
+      #{permissionType,jdbcType=INTEGER}, #{permissionUrl,jdbcType=VARCHAR}, #{permissionOrder,jdbcType=INTEGER}, 
+      #{permissionIcon,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zh.crm.entity.Permission">
+    <selectKey keyProperty="permissionId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="permissionName != null">
+        permissionName,
+      </if>
+      <if test="parentId != null">
+        parentId,
+      </if>
+      <if test="permission != null">
+        permission,
+      </if>
+      <if test="permissionType != null">
+        permissionType,
+      </if>
+      <if test="permissionUrl != null">
+        permissionUrl,
+      </if>
+      <if test="permissionOrder != null">
+        permissionOrder,
+      </if>
+      <if test="permissionIcon != null">
+        permissionIcon,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="permissionName != null">
+        #{permissionName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="permission != null">
+        #{permission,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionType != null">
+        #{permissionType,jdbcType=INTEGER},
+      </if>
+      <if test="permissionUrl != null">
+        #{permissionUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionOrder != null">
+        #{permissionOrder,jdbcType=INTEGER},
+      </if>
+      <if test="permissionIcon != null">
+        #{permissionIcon,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zh.crm.entity.Permission">
+    update sys_permission
+    <set>
+      <if test="permissionName != null">
+        permissionName = #{permissionName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parentId = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="permission != null">
+        permission = #{permission,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionType != null">
+        permissionType = #{permissionType,jdbcType=INTEGER},
+      </if>
+      <if test="permissionUrl != null">
+        permissionUrl = #{permissionUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionOrder != null">
+        permissionOrder = #{permissionOrder,jdbcType=INTEGER},
+      </if>
+      <if test="permissionIcon != null">
+        permissionIcon = #{permissionIcon,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where permissionId = #{permissionId,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.zh.crm.entity.Permission">
+    update sys_permission
+    set permissionName = #{permissionName,jdbcType=VARCHAR},
+      parentId = #{parentId,jdbcType=INTEGER},
+      permission = #{permission,jdbcType=VARCHAR},
+      permissionType = #{permissionType,jdbcType=INTEGER},
+      permissionUrl = #{permissionUrl,jdbcType=VARCHAR},
+      permissionOrder = #{permissionOrder,jdbcType=INTEGER},
+      permissionIcon = #{permissionIcon,jdbcType=VARCHAR}
+    where permissionId = #{permissionId,jdbcType=INTEGER}
+  </update>
+
+  <!--根据parentId获取子权限-->
+  <select id="findPermsByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />
+    from sys_permission where
+    parentId = #{parentId,jdbcType=INTEGER}
+    order by (permissionOrder+0)
+  </select>
+  <!--获取所有权限-->
+  <select id="findAllPerms" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />
+    from sys_permission
+    order by (permissionOrder+0)
+  </select>
+
+  <!--根据角色ID获取所有的权限信息-->
+  <select id="findPermsByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+    select
+     sp.permissionId,
+     permissionName,
+     parentId,
+     permission,
+     permissionType,
+     permissionUrl,
+     permissionOrder,
+     permissionIcon
+    from sys_permission sp left join sys_role_permission srp
+    on sp.permissionId = srp.permissionId
+    where srp.roleId = #{roleId}
+  </select>
+
+  <!--根据用户Id获取所有的菜单权限-->
+  <select id="findMenusByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select sp.permissionId,sp.permissionName,sp.parentId,sp.permission,sp.permissionType,sp.permissionUrl,
+    sp.permissionOrder,sp.permissionIcon
+    from sys_permission sp
+    left join sys_role_permission srp on sp.permissionId = srp.permissionId
+    left join sys_role sr on srp.roleId = sr.roleId
+    left join sys_user_role sur on sr.roleId = sur.roleId
+    left join sys_user su on sur.userId = su.userId
+    where su.userId=#{userId} and sp.parentId = #{parentId} and sp.permissionType = 0 order by (permissionOrder+0)
+  </select>
+</mapper>

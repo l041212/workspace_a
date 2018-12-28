@@ -1,0 +1,60 @@
+.commitopacity{
+    position:absolute;
+    width:100%;
+    height:100px;
+    background:#7f7f7f;
+    filter:alpha(opacity=50);
+    -moz-opacity:0.8;
+    -khtml-opacity: 0.5;
+    opacity: 0.5;
+    top:0px;
+    z-index:99999;}
+.jzts{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 200px;
+    margin: -45px 190px 0px 0px;
+}
+
+#passwordModal {
+	position: absolute;
+	width: 95%;
+	height: 120px;
+	margin: auto;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+	border-radius: 5px;
+}
+
+#passwordModal #passwordWarning {
+	text-align: center;
+	padding: 5px;
+	background-color: orange;
+	width: 90%;
+	height: 25px;
+	position: absolute;
+	margin: auto;
+	float: left;
+	color: dimgray;
+	border: 1px solid burlywood;
+	border-radius: 5px;
+	left: 0px;
+	right: 0px;
+	top: 65%;
+}
+
+#passwordModal .form-group {
+	margin-top: 5px;
+	color: dimgray;
+	width: 100%;
+	height: 20px;
+}
+
+#passwordModal label {
+	text-align: right;
+	margin-top: 5px;
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+		<link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+		<link rel="stylesheet" th:href="@{/css/ace/ace.min.css}">
+		<link rel="stylesheet" th:href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}">
+		<link rel="stylesheet" th:href="@{/plugins/bootstrapZtree/css/bootstrapStyle.css}">
+		<script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+		<script th:src="@{/js/bootstrap.min.js}"></script>
+		<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.core.js}"></script>
+		<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.excheck.js}"></script>
+		<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.exedit.js}"></script>
+		<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table.min.js}"></script>
+		<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table-zh-CN.min.js}"></script>
+		<script th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js}"></script>
+		<script th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js}"></script>
+		<script th:src="@{/plugins/tips/jquery.tips.js}"></script>
+		<script th:src="@{/js/bootbox.js}"></script>
+		<script th:src="@{/js/bus_friend/dump.js}"></script>
+		<script th:src="@{/js/bus_friend/friend_member_save.js}"></script>
+	</head>
+	<body class="no-skin">
+		<div class="main-container" id="main-container">
+			<div class="main-content">
+				<div class="main-content-inner">
+					<div class="page-content">
+						<div class="row">
+							<div class="col-xs-12">
+								<form class="form-horizontal" role="form" id="friendMemberForm">
+									<div id="zhongxin" style="padding-top: 13px;"></div>
+									<input type="hidden" name="id" th:value="${friendMember!=null?friendMember.id:''}" />
+									<input type="hidden" name="status" value="0" />
+									<table id="table_friend_member" class="table table-striped table-bordered table-hover">
+										<tr>
+											<td class="usertd">名称：</td>
+											<td>
+												<input type="text" name="name" title="姓名" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.name:''}" />
+											</td>
+											<td class="usertd">部门：</td>
+											<td>
+												<input id="typeText" type="hidden" 
+												th:value="${friendMember!=null && friendMember.type !=null ? friendMember.type.text : ''}"/>
+												<input type="text" name="typeId" title="部门" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.typeId:''}" />
+											</td>
+										</tr>
+										<tr>
+											<td class="usertd">性别：</td>
+											<td>
+												<input type="hidden" id="sex" name="sex" title="性别" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.sex:0}" /> 
+												<select id="sex_">
+													<option value="0"></option>
+													<option value="1">男</option>
+													<option value="2">女</option>
+												</select>
+											</td>
+											<td class="usertd">出身日期：</td>
+											<td>
+												<input type="text" name="birthday" title="出身日期" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.birthday:0}" /> 
+											</td>
+										</tr>
+										<tr>
+											<td class="usertd">身份证：</td>
+											<td colspan="3">
+												<input type="text" name="identity" title="身份证" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.identity:''}" />
+											</td>
+										</tr>
+										<tr>
+											<td class="usertd">联络电话：</td>
+											<td>
+												<input type="text" name="phone" title="联络电话" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.phone:''}" />
+											</td>
+											<td class="usertd">邮箱地址：</td>
+											<td>
+												<input type="text" name="email" title="邮箱地址" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.email:''}" />
+											</td>
+										</tr>
+										<tr>
+											<td class="usertd">住宅地址：</td>
+											<td colspan="3">
+												<input type="text" name="address" title="住宅地址" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.address:''}" />
+											</td>
+										</tr>
+										<tr>
+											<td class="usertd">教育：</td>
+											<td>
+												<input type="hidden" id="education" name="education" title="教育" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.education:''}" />
+												<select id="education_">
+													<option value="0"></option>
+													<option value="1">初中或以下</option>
+													<option value="2">高中</option>
+													<option value="3">本科</option>
+													<option value="4">研究生或以上</option>
+												</select>
+											</td>
+											<td class="usertd">职业：</td>
+											<td>
+												<input type="hidden" id="job" name="job" title="职业" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.job:''}" />
+												<select id="job_">
+													<option value="0"></option>
+													<option value="1">公务员</option>
+													<option value="2">企业</option>
+													<option value="3">学生</option>
+													<option value="4">离退休人员</option>
+													<option value="5">其他</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td class="usertd">公司：</td>
+											<td>
+												<input type="text" name="company" title="公司" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.company:''}" />
+											</td>
+											<td class="usertd">职位：</td>
+											<td>
+												<input type="text" name="post" title="职位" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.post:''}" />
+											</td>
+										</tr>
+										<tr>
+											<td class="usertd">常用线路：</td>
+											<td>
+												<input type="text" name="line" title="常用线路" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.line:''}" />
+											</td>
+											<td class="usertd">申请日期：</td>
+											<td>
+												<input type="text" name="applyTime" title="申请日期" style="width: 98%;"
+												th:value="${friendMember!=null?friendMember.applyTime:''}" />
+											</td>
+										</tr>
+										<tr>
+											<td class="usertd">申请目的：</td>
+											<td colspan="3">
+												<textarea name="destination" title="申请目的" style="width: 98%;"
+												th:text="${friendMember!=null?friendMember.destination:''}">
+												</textarea>
+											</td>
+										</tr>
+										<tr>
+											<td style="text-align: center;" colspan="4">
+												<a class="btn btn-mini btn-primary" onclick="save()">保存</a> 
+												<a class="btn btn-mini btn-danger" onclick="top.Dialog.close();">取消</a>
+											</td>
+										</tr>
+									</table>
+								</form>
+								<div id="zhongxin2" class="center" style="display: none">
+									<img th:src="@{/img/jzx.gif}" style="width: 50px;"><br/>
+									<h4 class="lighter block green"></h4>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

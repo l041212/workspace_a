@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}">
+</head>
+<body class="no-skin">
+<div class="main-container" id="main-container">
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" role="form" th:action="@{/cust}" id="customerForm" method="post">
+                            <div id="zhongxin" style="padding-top: 13px;"></div>
+                            <input type="hidden" name="_method" value="put" th:if="${customer!=null}"/>
+                            <input type="hidden" name="id"  th:if="${customer!=null}" th:value="${customer!=null}?${customer.id}">
+                            <input type="hidden" name="createTime" id="createTime"  th:if="${customer==null}" >
+                            <table id="table_report" class="table table-striped table-bordered table-hover">
+                                <tr>
+                                    <td class="usertd">姓名：</td>
+                                    <td><input  type="text" name="name" id="name"  maxlength="32" placeholder="这里输入客户姓名"
+                                               title="客户姓名" style="width:98%;" th:value="${customer!=null}?${customer.name}">
+                                    </td>
+                                    <td class="usertd">联系电话：</td>
+                                    <td><input  type="text" name="telephone" id="telephone"  maxlength="32"
+                                                placeholder="这里输入联系电话" title="联系电话" style="width:98%;"
+                                                th:value="${customer!=null}?${customer.telephone}">
+                                    </td>
+                                    <td class="usertd">主叫号码：</td>
+                                    <td><input  type="text" name="phone" id="phone"  maxlength="32"
+                                                placeholder="这里输入主叫号码" title="主叫号码" style="width:98%;"
+                                                th:value="${customer!=null}?${customer.phone}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="usertd">单位类型：</td>
+                                    <td>
+                                        <select id="companyType" name="companyType">
+                                            <option th:value="${companyType.value}" th:each="companyType:${companyTypes}"
+                                                    th:selected="${customer!=null}?${customer.companyType==companyType.value}"
+                                                    th:text="${companyType.text}">党政机关团体</option>
+                                        </select>
+                                    </td>
+                                    <td class="usertd">单位名称：</td>
+                                    <td colspan="3"><input  type="text" name="company" id="company"  maxlength="32"
+                                                placeholder="这里输入单位名称" title="单位名称" style="width:98%;"
+                                                th:value="${customer!=null}?${customer.company}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="usertd">地址：</td>
+                                    <td colspan="5">
+                                        <input type="text" name="addressti" id="address" title="地址"
+                                               maxlength="128" placeholder="这里输入地址" style="width: 98%;"
+                                               th:value="${customer!=null}?${customer.address}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="usertd">信访类型：</td>
+                                    <td>
+                                        <select id="visitType" name="visitType">
+                                            <option th:each="visitType:${visitTypes}" th:text="${visitType.text}"
+                                            th:value="${visitType.value}" th:selected="${customer!=null}?${customer.visitType==visitType.value}"></option>
+                                        </select>
+                                    </td>
+                                    <td class="usertd">信访内容：</td>
+                                    <td colspan="3">
+                                        <input type="text" name="content" id="content" title="信访内容"
+                                        maxlength="128" placeholder="这里输入信访内容" style="width: 98%;"
+                                        th:value="${customer!=null}?${customer.content}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="usertd">公交线路：</td>
+                                    <td>
+                                        <input type="text" name="busLine" id="busLine" title="公交线路"
+                                        maxlength="32" placeholder="这里输入公交线路" style="width: 98%;"
+                                        th:value="${customer!=null}?${customer.busLine}">
+                                    </td>
+                                    <td class="usertd">车辆编号：</td>
+                                    <td>
+                                        <input type="text" name="busNumber" id="busNumber" title="车辆编号"
+                                        maxlength="32" placeholder="这里输入车辆编号" style="width: 98%;"
+                                        th:value="${customer!=null}?${customer.busNumber}">
+                                    </td>
+                                    <td class="usertd">司机：</td>
+                                    <td>
+                                        <input type="text" name="driver" id="driver" title="司机"
+                                               maxlength="32" placeholder="这里输入司机" style="width: 98%;"
+                                               th:value="${customer!=null}?${customer.driver}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="usertd">乘务员：</td>
+                                    <td>
+                                        <input type="text" name="steward" id="steward" title="乘务员"
+                                               maxlength="32" placeholder="这里输入乘务员" style="width: 98%;"
+                                               th:value="${customer!=null}?${customer.steward}">
+                                    </td>
+                                    <td class="usertd">信访时间：</td>
+                                    <td>
+                                        <input class="span10 date-picker" name="visitTime" id="visitTime"
+                                               th:value="${customer!=null}?${customer.visitTime}" type="text"
+                                               data-date-format="yyyy-mm-dd"
+                                               readonly="readonly" placeholder="信访时间" title="信访时间"
+                                               style="width:98%;"/>
+                                    </td>
+                                    <td class="usertd">是否回复：</td>
+                                    <td>
+                                        <select id="isReply" name="isReply">
+                                            <option value="0" th:selected="${customer!=null}?${customer.isReply==0}">是</option>
+                                            <option value="1" th:selected="${customer!=null}?${customer.isReply==1}">否</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="usertd">受理人：</td>
+                                    <td>
+                                        <input type="text" name="accepter" id="accepter" title="受理人"
+                                               maxlength="32" placeholder="这里输入受理人" style="width: 98%;"
+                                               th:value="${customer!=null}?${customer.accepter}">
+                                    </td>
+                                    <td class="usertd">客户类型：</td>
+                                    <td>
+                                        <select id="customerType" name="customerType">
+                                            <option value="0" th:selected="${customer!=null}?${customer.companyType==0}">一般乘客</option>
+                                            <option value="1" th:selected="${customer!=null}?${customer.companyType==1}">关键乘客</option>
+                                            <option value="2" th:selected="${customer!=null}?${customer.companyType==2}">友好乘客</option>
+                                            <option value="3" th:selected="${customer!=null}?${customer.companyType==3}">媒体</option>
+                                            <option value="4" th:selected="${customer!=null}?${customer.companyType==4}">信息中心</option>
+                                            <option value="5" th:selected="${customer!=null}?${customer.companyType==5}">推销</option>
+                                            <option value="6" th:selected="${customer!=null}?${customer.companyType==6}">查信息</option>
+                                            <option value="7" th:selected="${customer!=null}?${customer.companyType==7}">信用卡</option>
+                                            <option value="8" th:selected="${customer!=null}?${customer.companyType==8}">特殊乘客</option>
+                                        </select>
+                                    </td>
+                                    <td class="usertd">证件类型：</td>
+                                    <td>
+                                        <select id="cardType" name="cardType">
+                                            <option value="0" th:selected="${customer!=null}?${customer.cardType==0}">身份证</option>
+                                            <option value="1" th:selected="${customer!=null}?${customer.cardType==1}">学生证</option>
+                                            <option value="2" th:selected="${customer!=null}?${customer.cardType==2}">台胞证</option>
+                                            <option value="3" th:selected="${customer!=null}?${customer.cardType==3}">护照</option>
+                                            <option value="4" th:selected="${customer!=null}?${customer.cardType==4}">港澳返乡证</option>
+                                            <option value="5" th:selected="${customer!=null}?${customer.cardType==5}">出生日期(未成年人使用)</option>
+                                            <option value="6" th:selected="${customer!=null}?${customer.cardType==6}">组织机构代码</option>
+                                            <option value="7" th:selected="${customer!=null}?${customer.cardType==7}">军人证</option>
+                                            <option value="8" th:selected="${customer!=null}?${customer.cardType==8}">工商注册号码</option>
+                                            <option value="9" th:selected="${customer!=null}?${customer.cardType==9}">伤残证</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;" colspan="6">
+                                        <a shiro:hasPermission="cust:update" class="btn btn-mini btn-primary" onclick="save()">保存</a>
+                                        <a class="btn btn-mini btn-danger" onclick="top.Dialog.close();">取消</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                        <div id="zhongxin2" class="center" style="display:none">
+                            <img th:src="@{/img/jzx.gif}" style="width: 50px;"><br/>
+                            <h4 class="lighter block green"></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery-1.7.2.js}"></script>
+<script th:src="@{/js/ace/ace.min.js}"></script>
+<script th:src="@{/plugins/tips/jquery.tips.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js}"></script>
+<script th:inline="javascript">
+    top.hideMask();
+    $("#visitTime").datetimepicker({minView: 2,autoclose: 1,clearBtn:true,todayBtn: 1});
+    function save() {
+        if($("#name").val()==""){
+            $("#name").tips({
+                side:3,
+                msg:'输入客户姓名',
+                bg:'#AE81FF',
+                time:2
+            });
+            $("#name").focus();
+            return false;
+        }
+        if($("#telephone").val()==""){
+            $("#telephone").tips({
+                side:3,
+                msg:'输入客户电话号码',
+                bg:'#AE81FF',
+                time:2
+            });
+            $("#telephone").focus();
+            return false;
+        }
+        if($("#telephone").val()!=""){
+            var PhoneReg = /^1[0-9]{10}$/;
+            if (!PhoneReg.test($("#telephone").val())) {
+                $("#telephone").tips({
+                    side:3,
+                    msg:'请正确的输入电话号码',
+                    bg:'#AE81FF',
+                    time:2
+                });
+                return false;
+            }
+        }
+        if($("#createTime").length>0){
+            alert(getCurrentTime());
+            $("#createTime").val(getCurrentTime());
+        }
+        $("#customerForm").submit();
+        $("#zhongxin").hide();
+        $("#zhongxin2").show();
+    }
+    function getCurrentTime(){
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = (date.getMonth()+1)<10?"0"+(date.getMonth()+1):(date.getMonth()+1);
+        var day = date.getDate()<10?"0"+date.getDate():date.getDate();
+        var hour = date.getHours()<10?"0"+date.getHours():date.getHours();
+        var minutes = date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes();
+        var seconds = date.getSeconds()<10?"0"+date.getSeconds():date.getSeconds();
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + day
+            + " " +hour + seperator2 + minutes+ seperator2 + seconds;
+        return currentdate;
+    }
+</script>
+</body>
+</html>

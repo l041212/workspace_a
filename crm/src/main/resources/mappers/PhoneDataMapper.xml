@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zh.crm.mapper.PhoneDataMapper">
+  <select id="findReportEveryday" parameterType="java.util.Map" resultType="java.util.Map">
+    select DATE_FORMAT(tp.operationTime,'%Y-%m-%d') AS date,
+      COUNT(case when tp.callsign=0 and tp.alertingTime is not null then 1 else null end) AS sumCallIn,
+      COUNT(case when tp.callsign=0 and tp.connectTime is not null then 1 else null end) AS sumSuccessCallIn,
+      COUNT(case when tp.callsign=1 and tp.alertingTime is not null then 1 else null end) AS callOutCount,
+      COUNT(case when tp.callsign=1 and tp.connectTime is not null then 1 else null end) AS successCallOutCount,
+      FLOOR(AVG(tp.hangupTime - tp.connectTime)) AS avgTalkTime ,
+      FLOOR(AVG(tp.queueEndTime - tp.queueStartTime)) AS avgQueueTime ,
+      FLOOR(AVG(tp.notbusyTime - tp.hangupTime)) AS avgAfterTime ,
+      FLOOR(AVG(tp.connectTime - tp.alertingTime)) AS avgRingTime ,
+      SUM(case when tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF(second,tp.connectTime,tp.hangupTime) else 0 end) AS sumCallInTime,
+      SUM(case when tp.queueEndTime is not null then TIMESTAMPDIFF(second,tp.queueStartTime,tp.queueEndTime) else 0 end) AS sumQueueTime
+      FROM t_phonedata AS tp where 1=1
+    <if test="startDate != null and startDate != ''">
+      and to_days(tp.operationTime)  >= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and to_days(#{endDate}) >= to_days(tp.operationTime)
+    </if>
+      GROUP BY DAY(tp.operationTime)
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+
+  <select id="findChartEveryday" parameterType="java.lang.String" resultType="java.util.Map">
+    select DATE_FORMAT(tp.operationTime,'%Y-%m-%d') AS date,
+      COUNT(case when tp.callsign=0 and tp.alertingTime is not null then 1 else null end) AS sumCallIn,
+      COUNT(case when tp.callsign=0 and tp.connectTime is not null then 1 else null end) AS sumSuccessCallIn,
+      COUNT(case when tp.callsign=1 and tp.alertingTime is not null then 1 else null end) AS callOutCount,
+      COUNT(case when tp.callsign=1 and tp.connectTime is not null then 1 else null end) AS successCallOutCount,
+      FLOOR(AVG(tp.hangupTime - tp.connectTime)) AS avgTalkTime ,
+      FLOOR(AVG(tp.queueEndTime - tp.queueStartTime)) AS avgQueueTime ,
+      FLOOR(AVG(tp.notbusyTime - tp.hangupTime)) AS avgAfterTime ,
+      FLOOR(AVG(tp.connectTime - tp.alertingTime)) AS avgRingTime ,
+      SUM(case when tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF(second,tp.connectTime,tp.hangupTime) else 0 end) AS sumCallInTime,
+      SUM(case when tp.queueEndTime is not null then TIMESTAMPDIFF(second,tp.queueStartTime,tp.queueEndTime) else 0 end) AS sumQueueTime
+      FROM t_phonedata AS tp where 1=1
+      and DATE_FORMAT(tp.operationTime,'%Y-%m') = #{month}
+      GROUP BY DAY(tp.operationTime)
+  </select>
+
+
+  <!--报表按月份分组查询分页-->
+  <select id="findReportMonth" parameterType="java.util.Map" resultType="java.util.Map">
+    select DATE_FORMAT(tp.operationTime,'%Y-%m') AS date,
+    COUNT(case when tp.callsign=0 and tp.alertingTime is not null then 1 else null end) AS sumCallIn,
+    COUNT(case when tp.callsign=0 and tp.connectTime is not null then 1 else null end) AS sumSuccessCallIn,
+    COUNT(case when tp.callsign=1 and tp.alertingTime is not null then 1 else null end) AS callOutCount,
+    COUNT(case when tp.callsign=1 and tp.connectTime is not null then 1 else null end) AS successCallOutCount,
+    FLOOR(AVG(tp.hangupTime - tp.connectTime)) AS avgTalkTime ,
+    FLOOR(AVG(tp.queueEndTime - tp.queueStartTime)) AS avgQueueTime ,
+    FLOOR(AVG(tp.notbusyTime - tp.hangupTime)) AS avgAfterTime ,
+    FLOOR(AVG(tp.connectTime - tp.alertingTime)) AS avgRingTime ,
+    SUM(case when tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF(second,tp.connectTime,tp.hangupTime) else 0 end) AS sumCallInTime,
+    SUM(case when tp.queueEndTime is not null then TIMESTAMPDIFF(second,tp.queueStartTime,tp.queueEndTime) else 0 end) AS sumQueueTime
+    FROM t_phonedata AS tp where 1=1
+    <if test="startDate != null and startDate != ''">
+      and DATE_FORMAT(tp.operationTime,'%Y-%m')  >= #{startDate}
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and #{endDate}  >= DATE_FORMAT(tp.operationTime,'%Y-%m')
+    </if>
+    GROUP BY MONTH(tp.operationTime)
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+
+  <select id="findChartMonth" parameterType="java.lang.String" resultType="java.util.Map">
+    select DATE_FORMAT(tp.operationTime,'%Y-%m') AS date,
+      COUNT(case when tp.callsign=0 and tp.alertingTime is not null then 1 else null end) AS sumCallIn,
+      COUNT(case when tp.callsign=0 and tp.connectTime is not null then 1 else null end) AS sumSuccessCallIn,
+      COUNT(case when tp.callsign=1 and tp.alertingTime is not null then 1 else null end) AS callOutCount,
+      COUNT(case when tp.callsign=1 and tp.connectTime is not null then 1 else null end) AS successCallOutCount,
+      FLOOR(AVG(tp.hangupTime - tp.connectTime)) AS avgTalkTime ,
+      FLOOR(AVG(tp.queueEndTime - tp.queueStartTime)) AS avgQueueTime ,
+      FLOOR(AVG(tp.notbusyTime - tp.hangupTime)) AS avgAfterTime ,
+      FLOOR(AVG(tp.connectTime - tp.alertingTime)) AS avgRingTime ,
+      SUM(case when tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF(second,tp.connectTime,tp.hangupTime) else 0 end) AS sumCallInTime,
+      SUM(case when tp.queueEndTime is not null then TIMESTAMPDIFF(second,tp.queueStartTime,tp.queueEndTime) else 0 end) AS sumQueueTime
+      FROM t_phonedata AS tp where 1=1
+      and DATE_FORMAT(tp.operationTime,'%Y') = #{year}
+      GROUP BY month(tp.operationTime)
+  </select>
+
+
+  <!--报表按年分组查询分页-->
+  <select id="findReportYear" parameterType="java.util.Map" resultType="java.util.Map">
+    select DATE_FORMAT(tp.operationTime,'%Y') AS date,
+    COUNT(case when tp.callsign=0 and tp.alertingTime is not null then 1 else null end) AS sumCallIn,
+    COUNT(case when tp.callsign=0 and tp.connectTime is not null then 1 else null end) AS sumSuccessCallIn,
+    COUNT(case when tp.callsign=1 and tp.alertingTime is not null then 1 else null end) AS callOutCount,
+    COUNT(case when tp.callsign=1 and tp.connectTime is not null then 1 else null end) AS successCallOutCount,
+    FLOOR(AVG(tp.hangupTime - tp.connectTime)) AS avgTalkTime ,
+    FLOOR(AVG(tp.queueEndTime - tp.queueStartTime)) AS avgQueueTime ,
+    FLOOR(AVG(tp.notbusyTime - tp.hangupTime)) AS avgAfterTime ,
+    FLOOR(AVG(tp.connectTime - tp.alertingTime)) AS avgRingTime ,
+    SUM(case when tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF(second,tp.connectTime,tp.hangupTime) else 0 end) AS sumCallInTime,
+    SUM(case when tp.queueEndTime is not null then TIMESTAMPDIFF(second,tp.queueStartTime,tp.queueEndTime) else 0 end) AS sumQueueTime
+    FROM t_phonedata AS tp where 1=1
+    GROUP BY YEAR(tp.operationTime)
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+
+  <select id="findChartYear"  resultType="java.util.Map">
+    select DATE_FORMAT(tp.operationTime,'%Y') AS date,
+      COUNT(case when tp.callsign=0 and tp.alertingTime is not null then 1 else null end) AS sumCallIn,
+      COUNT(case when tp.callsign=0 and tp.connectTime is not null then 1 else null end) AS sumSuccessCallIn,
+      COUNT(case when tp.callsign=1 and tp.alertingTime is not null then 1 else null end) AS callOutCount,
+      COUNT(case when tp.callsign=1 and tp.connectTime is not null then 1 else null end) AS successCallOutCount,
+      FLOOR(AVG(tp.hangupTime - tp.connectTime)) AS avgTalkTime ,
+      FLOOR(AVG(tp.queueEndTime - tp.queueStartTime)) AS avgQueueTime ,
+      FLOOR(AVG(tp.notbusyTime - tp.hangupTime)) AS avgAfterTime ,
+      FLOOR(AVG(tp.connectTime - tp.alertingTime)) AS avgRingTime ,
+      SUM(case when tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF(second,tp.connectTime,tp.hangupTime) else 0 end) AS sumCallInTime,
+      SUM(case when tp.queueEndTime is not null then TIMESTAMPDIFF(second,tp.queueStartTime,tp.queueEndTime) else 0 end) AS sumQueueTime
+      FROM t_phonedata AS tp
+      GROUP BY year (tp.operationTime)
+  </select>
+
+  <!--坐席话务量报表-->
+  <select id="findTableAgent" parameterType="java.util.Map" resultType="java.util.Map">
+    select tp.agentno as agentNumber,
+      tp.extNo as extNumber,
+      COUNT(case when tp.callsign=0 and tp.alertingTime is not null then 1 else null end) AS sumCallIn,
+      COUNT(case when tp.callsign=0 and tp.connectTime is not null then 1 else null end) AS sumSuccessCallIn,
+      COUNT(case when tp.callsign=1 and tp.alertingTime is not null then 1 else null end) AS callOutCount,
+      COUNT(case when tp.callsign=1 and tp.connectTime is not null then 1 else null end) AS successCallOutCount,
+      COUNT(case when tp.callsign=0 and (10>=TIMESTAMPDIFF(second,tp.alertingTime,tp.connectTime)) then 1 else null end) AS tenCount,
+      COUNT(case when tp.holdstratdate is not null then 1 else 0 end) as holdCount,
+      COUNT(case when tp.rollout is not null and tp.rollout = '4' then 1 else 0 end) as turnInCount,
+      COUNT(case when tp.rollout is not null and tp.rollout = '1' then 1 else 0 end) as turnOutCount
+    from t_phonedata AS tp
+    where tp.agentno != ''
+    <if test="startDate != null and startDate != ''">
+      and to_days(tp.operationTime)  >= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and to_days(#{endDate}) >= to_days(tp.operationTime)
+    </if>
+    group by tp.agentno
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+  <!--坐席话务量报表-->
+  <select id="findChartAgent" parameterType="java.util.Map" resultType="java.util.Map">
+    select tp.agentno as agentNumber,
+    COUNT(case when tp.callsign=0 and tp.alertingTime is not null then 1 else null end) AS sumCallIn,
+    COUNT(case when tp.callsign=0 and tp.connectTime is not null then 1 else null end) AS sumSuccessCallIn,
+    COUNT(case when tp.callsign=1 and tp.alertingTime is not null then 1 else null end) AS callOutCount,
+    COUNT(case when tp.callsign=1 and tp.connectTime is not null then 1 else null end) AS successCallOutCount,
+    COUNT(case when tp.holdstratdate is not null then 1 else 0 end) as holdCount,
+    COUNT(case when tp.rollout is not null and tp.rollout = '4' then 1 else 0 end) as turnInCount,
+    COUNT(case when tp.rollout is not null and tp.rollout = '1' then 1 else 0 end) as turnOutCount
+    from t_phonedata AS tp
+    where tp.agentno != ''
+    <if test="startDate != null and startDate != ''">
+      and to_days(tp.operationTime)  >= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and to_days(#{endDate}) >= to_days(tp.operationTime)
+    </if>
+    group by tp.agentno
+  </select>
+
+  <!--坐席话务评价-->
+  <select id="findTableAgentEvaluate" parameterType="java.util.Map" resultType="java.util.Map">
+    select tp.agentno as agentNumber,
+     tp.extNo as extNumber,
+     COUNT(case when tp.callsign in(0,1) and tp.alertingTime is not null then 1 else null end) AS sumCall,
+     COUNT(case when tp.callsign in(0,1) and tp.appraiseState in(0,1,2,3,4) then 1 else null end) AS sumEvaluate,
+     COUNT(case when tp.callsign in(0,1) and tp.appraiseState in(1,2,3,4) then 1 else null end)AS sucSumEvaluate,
+     COUNT(case when tp.callsign in(0,1) and tp.appraiseState=1 then 1 else null end) AS veryGoodSum,
+     COUNT(case when tp.callsign in(0,1) and tp.appraiseState=2 then 1 else null end) AS goodSum,
+     COUNT(case when tp.callsign in(0,1) and tp.appraiseState=3 then 1 else null end) AS commonSum,
+     COUNT(case when tp.callsign in(0,1) and tp.appraiseState=4 then 1 else null end) AS badSum
+    from t_phonedata AS tp
+    where tp.agentno != ''
+    <if test="startDate != null and startDate != ''">
+      and to_days(tp.operationTime)  >= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and to_days(#{endDate}) ) >= to_days(tp.operationTime
+    </if>
+    group by tp.agentno
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+
+  <select id="findChartAgentEvaluate" parameterType="java.util.Map" resultType="java.util.Map">
+    select tp.agentno as agentNumber,
+    COUNT(case when tp.callsign in(0,1) and tp.alertingTime is not null then 1 else null end) AS sumCall,
+    COUNT(case when tp.callsign in(0,1) and tp.appraiseState in(0,1,2,3,4) then 1 else null end) AS sumEvaluate,
+    COUNT(case when tp.callsign in(0,1) and tp.appraiseState in(1,2,3,4) then 1 else null end)AS sucSumEvaluate,
+    COUNT(case when tp.callsign in(0,1) and tp.appraiseState=1 then 1 else null end) AS veryGoodSum,
+    COUNT(case when tp.callsign in(0,1) and tp.appraiseState=2 then 1 else null end) AS goodSum,
+    COUNT(case when tp.callsign in(0,1) and tp.appraiseState=3 then 1 else null end) AS commonSum,
+    COUNT(case when tp.callsign in(0,1) and tp.appraiseState=4 then 1 else null end) AS badSum
+    from t_phonedata AS tp
+    where tp.agentno != ''
+    <if test="startDate != null and startDate != ''">
+      and to_days(tp.operationTime)  >= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and to_days(#{endDate}) >= to_days(tp.operationTime)
+    </if>
+    group by tp.agentno
+  </select>
+  
+  <!--坐席人均话务-->
+  <select id="findTableAgentAverage" parameterType="java.util.Map" resultType="java.util.Map">
+     select tp.agentno as agentNumber,
+      tp.extNo as extNumber,
+      avg(case when tp.callsign=0 and tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF (second,tp.alertingTime,tp.connectTime) else 0 end) as avgCallInTime,
+      avg(case when tp.callsign=0 and tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF (second,tp.alertingTime,tp.connectTime) else 0 end) as avgCallInRingTime,
+      avg(case when tp.callsign=1 and tp.connectTime is not null and tp.hangupTime is not null then TIMESTAMPDIFF(second,tp.connectTime,tp.hangupTime) else 0 end) as avgCallOutTime,
+      avg(case when tp.callsign=1 and tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF(second,tp.alertingTime,tp.connectTime) else 0 end) as avgCallOutRingTime,
+      avg(case when tp.callsign in(0,1) and tp.holdstratdate is not null and tp.holdenddate is not null then TIMESTAMPDIFF(second,tp.holdstratdate,tp.holdenddate) else 0 end) as avgHoldTime,
+      avg(case when tp.callsign in(0,1) and tp.hangupTime is not null and tp.notbusyTime is not null then TIMESTAMPDIFF(second,tp.hangupTime,tp.notbusyTime) else 0 end) as avgAfterTime
+      from t_phonedata AS tp
+     where tp.agentno != ''
+    <if test="startDate != null and startDate != ''">
+      and to_days(tp.operationTime)  >= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      andto_days(#{endDate})  >= to_days(tp.operationTime)
+    </if>
+    group by tp.agentno
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+
+  <select id="findChartAgentAverage" parameterType="java.util.Map" resultType="java.util.Map">
+    select tp.agentno as agentNumber,
+    tp.extNo as extNumber,
+    avg(case when tp.callsign=0 and tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF (second,tp.alertingTime,tp.connectTime) else 0 end) as avgCallInTime,
+    avg(case when tp.callsign=0 and tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF (second,tp.alertingTime,tp.connectTime) else 0 end) as avgCallInRingTime,
+    avg(case when tp.callsign=1 and tp.connectTime is not null and tp.hangupTime is not null then TIMESTAMPDIFF(second,tp.connectTime,tp.hangupTime) else 0 end) as avgCallOutTime,
+    avg(case when tp.callsign=1 and tp.alertingTime is not null and tp.connectTime is not null then TIMESTAMPDIFF(second,tp.alertingTime,tp.connectTime) else 0 end) as avgCallOutRingTime,
+    avg(case when tp.callsign in(0,1) and tp.holdstratdate is not null and tp.holdenddate is not null then TIMESTAMPDIFF(second,tp.holdstratdate,tp.holdenddate) else 0 end) as avgHoldTime,
+    avg(case when tp.callsign in(0,1) and tp.hangupTime is not null and tp.notbusyTime is not null then TIMESTAMPDIFF(second,tp.hangupTime,tp.notbusyTime) else 0 end) as avgAfterTime
+    from t_phonedata AS tp
+    where tp.agentno != ''
+    <if test="startDate != null and startDate != ''">
+      and to_days(tp.operationTime)  >= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and to_days(#{endDate}) >= to_days(tp.operationTime)
+    </if>
+    group by tp.agentno
+  </select>
+
+  <!--呼叫记录明细表-->
+  <select id="findCallDetail" parameterType="java.util.Map" resultType="java.util.Map">
+    select ucid,agentno,extNo,callNo,calledNo,callsign,queueStartTime,
+    queueEndTime,alertingTime,holdstratdate,holdenddate,connectTime,hangupTime,
+    notbusyTime,appraiseTime,dropflag,
+    appraiseState,rollout,operationTime
+    from t_phonedata
+    where 1=1 and agentno != ''
+    <if test="startDate != null and startDate != ''">
+      and to_days(tp.operationTime)  >= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and to_days(#{endDate})>=to_days(tp.operationTime)
+    </if>
+    <if test="agentno != null and agentno != ''">
+      and agentno = #{agentno}
+    </if>
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+
+  <select id="findAgentStatus" parameterType="java.util.Map" resultType="java.util.Map">
+    select ext_number,user_num,user_name,signin_date,signoff_date,inidle_date,inbusy_endate,
+    after_hungup_date,holdstratdate,holdenddate,ucid,deal_time,online_time,offline_time
+    from t_agent_workstate
+    where 1=1
+    <if test="startDate != null and startDate != ''">
+      and to_days(deal_time)>= to_days(#{startDate})
+    </if>
+    <if test="endDate != null and endDate != ''">
+      and to_days(#{endDate})>=to_days(deal_time)
+    </if>
+    <if test="user_num != null and user_num != ''">
+      and user_num = #{user_num}
+    </if>
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+</mapper>

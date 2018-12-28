@@ -1,0 +1,40 @@
+#qualityCheckButton {
+	margin-top: 10px;
+}
+
+#qualityCheckButton select,
+#qualityCheckButton input,
+#qualityCheckButton button {
+	float: left;
+	margin: 0px 10px 10px 0;
+}
+
+#qualityCheckButton button {
+	margin: 0 0 10px 10px;
+}
+
+#qualityCheckButton button {
+	float: right;
+}
+
+#qualityCheckButton #reStartDate,
+#qualityCheckButton #reEndDate {
+	width: 100px;
+}
+
+#qualityCheckButton #reStartHour,
+#qualityCheckButton #reEndHour,
+#qualityCheckButton #period {
+	width: 60px;
+}
+
+#qualityCheckButton #keywords {
+	width:120px;
+}
+
+#qualityCheckButton #reEndDate,
+#qualityCheckButton #reEndHour,
+#qualityCheckButton #period,
+#qualityCheckButton #isCheck {
+	margin-right: 20px;
+}

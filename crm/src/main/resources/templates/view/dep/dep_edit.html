@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}">
+
+</head>
+<body class="no-skin">
+<div class="main-container" id="main-container">
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" role="form" th:action="@{/dep}" id="depForm" method="post">
+                            <div id="zhongxin" style="padding-top:13px;">
+                                <input type="hidden" name="parentId" th:value="${parentId==null?'0':parentId}">
+                                <input type="hidden" name="_method" value="put" th:if="${deps!=null}"/>
+                                <input id="depId" type="hidden" name="depId" th:if="${deps!=null}" th:value="${deps.depId}">
+                                <table id="table_report" class="table table-striped table-bordered table-hover" style="margin-top:15px;">
+                                    <tr>
+                                        <td style="width:79px;text-align: right;padding-top: 13px;">上级:</td>
+                                        <td>
+                                            <div class="col-xs-6 label label-lg label-light arrowed-in arrowed-right">
+                                                <b th:text="${dep==null?'(无) 此项为顶级部门':dep.depName}"></b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:70px;text-align: right;padding-top: 13px;">名称:</td>
+                                        <td>   <input class="form-control" placeholder="这里输入组织名称"  maxlength="50" type="text" id="depName" name="depName" th:value="${deps!=null}?${deps.depName}" style="width:98%"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:70px;text-align: right;padding-top: 13px;">编码:</td>
+                                        <td><input  class="form-control" type="text" name="depCode" id="depCode"  maxlength="50" th:value="${deps!=null}?${deps.depCode}" placeholder="这里输入组织编码" title="组织编码" style="width:98%;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:70px;text-align: right;padding-top: 13px;">备注:</td>
+                                        <td>
+                                            <textarea rows="3" cols="46"  id="remark" name="remark" placeholder="这里输入备注" title="备注" th:text="${deps!=null}?${deps.remark}"  style="width:98%;"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="center" colspan="10">
+                                            <a shiro:hasPermission="dep:update" class="btn btn-mini btn-primary" onclick="save();">保存</a>
+                                            <a class="btn btn-mini btn-danger" onclick="top.Dialog.close();">取消</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </form>
+                        <div id="zhongxin2" class="center" style="display:none">
+                            <img th:src="@{/img/jzx.gif}" style="width: 50px;"><br/>
+                            <h4 class="lighter block green"></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/plugins/tips/jquery.tips.js}"></script>
+<script th:inline="javascript">
+    top.hideMask();
+    var dep = [[${deps}]]
+    function save(){
+        if($("#depName").val()==""){
+            $("#depName").tips({
+                side:3,
+                msg:'请输入',
+                bg:'#AE81FF',
+                time:2
+            });
+            $("#depName").focus();
+            return false;
+        }
+        if($("#depCode").val()==""){
+            $("#depCode").tips({
+                side:3,
+                msg:'请输入',
+                bg:'#AE81FF',
+                time:2
+            });
+            $("#depCode").focus();
+            return false;
+        }
+        var depCode = $("#depCode").val();
+        if(dep==null||dep==undefined||dep.depCode!=depCode){
+            $.ajax({
+                type:"POST",
+                url:"/getDepByCode/"+$("#depCode").val(),
+                dataType:"json",
+                success:function(data){
+                    if(data!=0){
+                        $("#depCode").tips({
+                            side:3,
+                            msg:'部门编码已存在',
+                            bg:'#AE81FF',
+                            time:2
+                        });
+                        $("#depCode").focus();
+                        return false ;
+                    }
+                    $("#depForm").submit();
+                    $("#zhongxin").hide();
+                    $("#zhongxin2").show();
+                }
+            })
+        }else{
+            $("#depForm").submit();
+            $("#zhongxin").hide();
+            $("#zhongxin2").show();
+        }
+    }
+</script>
+</body>
+
+</html>

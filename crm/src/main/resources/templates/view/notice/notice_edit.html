@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/selectZtree/import_fh.css}">
+    <link rel="stylesheet" th:href="@{/plugins/selectZtree/ztree/ztree.css}">
+    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}">
+</head>
+<body class="no-skin">
+<div class="main-container" id="main-container">
+<div class="main-content">
+<div class="main-content-inner">
+<div class="page-content">
+<div class="row">
+    <div class="col-xs-12">
+        <form class="form-horizontal" role="form" th:action="@{/notice}" id="noticeForm" method="post">
+            <div id="zhongxin" style="padding-top: 13px;"></div>
+            <input name="createDate" id="createDate" type="hidden"
+                   th:value="${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd hh:mm:ss')}"
+                   th:if="${notice==null}">
+            <input name="creater" id="creater"  type="hidden"
+                   th:value="${session.user.number}" >
+            <input name="updateDate" id="updateDate" type="hidden"
+                   th:value="${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd hh:mm:ss')}"
+                   th:if="${notice!=null}">
+            <input type="hidden" name="_method" value="put" th:if="${notice!=null}"/>
+            <input type="hidden" name="id"  th:if="${notice!=null}" th:value="${notice!=null}?${notice.id}">
+            <input name="status" id="status" type="hidden" value="已发布" >
+            <input name="index" id="index" type="hidden" >
+            <table id="table_report" class="table table-striped table-bordered table-hover">
+                <tr>
+                    <td class="utd">标题：</td>
+                    <td colspan="3">
+                        <input type="text" name="title" id="title" placeholder="这里输入公告标题"
+                        title="公告标题" maxlength="64" style="width:98%;" th:value="${notice!=null}?${notice.title}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="utd">类型</td>
+                    <td>
+                        <select id="type" name="type" style="width:98%;">
+                            <option value="外部" th:selected="${notice!=null}?${notice.type=='外部'}">外部</option>
+                        </select>
+                    </td>
+                    <td>状态：</td>
+                    <td>
+                        <span>新建中</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="utd">选择部门：</td>
+                    <td id="deps">
+                        <input  type="hidden" name="depId" id="depId"  maxlength="256">
+                        <div  class="selectTree" id="selectTree" trueType="selectTree"></div>
+                    </td>
+                    <td>失效时间：</td>
+                    <td>
+                        <input class="span10 date-picker" name="deadline" id="deadline"
+                               data-date-format="yyyy-mm-dd"
+                               readonly="readonly" placeholder="失效时间" title="失效时间"
+                               style="width:98%;" th:value="${notice!=null}?${notice.deadline}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="utd">内容：</td>
+                    <td colspan="3">
+                        <input type="hidden" name="content" id="content1">
+                        <div id="content" style="width:98%;"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;" colspan="10">
+                        <a shiro:hasPermission="notice:update" class="btn btn-mini btn-primary" onclick="saveDraft()" th:if="${notice==null}">保存草稿</a>
+                        <a shiro:hasPermission="notice:update" class="btn btn-mini btn-primary" onclick="save(0)" >发布公告</a>
+                        <a shiro:hasPermission="notice:update" class="btn btn-mini btn-primary" onclick="save(1)" >发布跑马灯</a>
+                        <a class="btn btn-mini btn-danger" onclick="top.Dialog.close();">取消</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div id="zhongxin2" class="center" style="display:none">
+            <img th:src="@{/img/jzx.gif}" style="width: 50px;"><br/>
+            <h4 class="lighter block green"></h4>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script th:src="@{/js/jquery-1.7.2.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/ace/ace.min.js}"></script>
+<script th:src="@{/plugins/tips/jquery.tips.js}"></script>
+<script th:src="@{/plugins/wangEditor/wangEditor.js}"></script>
+<script th:src="@{/plugins/selectZtree/selectTree.js}"></script>
+<script th:src="@{/plugins/selectZtree/ztree/ztree.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js}"></script>
+<script th:inline="javascript">
+    top.hideMask();
+    var E = window.wangEditor;
+    var editor = new E('#content');
+    editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
+    editor.create()
+    $("#deadline").datetimepicker({minView: 2,autoclose: 1,clearBtn:true,todayBtn: 1});
+    var defaultNodes = {"treeNodes":eval([[${deps}]])};
+    $("#selectTree").bind("change",function(){
+        if(!$(this).attr("relValue")){
+            //  top.Dialog.alert("没有选择节点");
+        }else{
+            //alert("选中节点文本："+$(this).attr("relText")+"<br/>选中节点值："+$(this).attr("relValue"));
+            $("#depId").val($(this).attr("relValue"));
+        }
+    });
+    $("#selectTree").data("data",defaultNodes);
+    $("#selectTree").selectTreeRender();
+   // $(".w-e-menu").css("z-index","101");
+    var notice = [[${notice}]];
+    if(notice!=null){
+        if(notice.dep!=null){
+            $("#deps #selectTree2_input").val(notice.dep.depName);
+        }
+        if(notice.content!=null){
+            editor.txt.html(notice.content);
+        }
+    }
+    function save(index){
+        $("#index").val(index);
+        if($("#title").val()==""){
+            $("#title").tips({
+                side:3,
+                msg:'输入标题',
+                bg:'#AE81FF',
+                time:2
+            });
+            return false;
+        }
+        $("#content1").val(editor.txt.html());
+        $("#noticeForm").submit();
+        $("#zhongxin").hide();
+        $("#zhongxin2").show();
+    }
+    function saveDraft() {
+        $("#status").val("草稿");
+        save();
+    }
+</script>
+</body>
+</html>

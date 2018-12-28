@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta charset="UTF-8">
+	    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+	    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}">
+	    <link rel="stylesheet" th:href="@{/plugins/selectZtree/import_fh.css}">
+	    <link rel="stylesheet" th:href="@{/plugins/selectZtree/ztree/ztree.css}">
+	    <script th:src="@{/js/jquery-1.7.2.js}"></script>
+		<script th:src="@{/plugins/selectZtree/selectTree.js}"></script>
+		<script th:src="@{/plugins/selectZtree/ztree/ztree.js}"></script>
+		<script th:src="@{/js/ace/ace.min.js}"></script>
+		<script th:src="@{/plugins/tips/jquery.tips.js}"></script>
+		<script th:src="@{/js/shift/shift_save.js}"></script>
+	</head>
+	<body class="no-skin">
+		<div class="main-container" id="main-container">
+		    <div class="main-content">
+		        <div class="main-content-inner">
+		            <div class="page-content">
+		                <div class="row">
+		                    <div class="col-xs-12">
+		                        <form class="form-horizontal" role="form" th:action="@{/shift}" id="shiftForm" method="post">
+		                            <div id="zhongxin" style="padding-top: 13px;"></div>
+		                            <input type="hidden" name="id" th:value="${shift!=null?shift.id:''}"/>
+		                            <input type="hidden" name="status"  value="0"/>
+		                            <table id="table_shift" class="table table-striped table-bordered table-hover">
+		                                <tr>
+		                                    <td class="usertd">名称：</td>
+		                                    <td>
+		                                    	<input type="text" name="name" title="班次名称"
+												style="width:98%;" th:value="${shift!=null?shift.name:''}"/>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="usertd">时段：</td>
+		                                    <td>
+		                                        <input type="text" name="period" title="班次时段"
+		                                        style="width:98%;" th:value="${shift!=null?shift.period:''}"/>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="usertd">颜色：</td>
+		                                    <td>
+		                                        <input type="color" name="color" title="颜色" list="colors"
+		                                        style="width:98%;padding:0px;" th:value="${shift!=null?shift.color:'#FFFFFF'}"/>
+		                                        <datalist id="colors">
+		                                        	<!-- 
+												    <option>#FFFACD</option>
+												    <option>#8FBC8F</option>
+												    <option>#F08080</option>
+												    <option>#FFB6C1</option>
+												    <option>#6495ED</option>
+												    <option>#DEB887</option>
+												    <option>#90EE90</option>
+												    <option>#FFA500</option>
+												    <option>#FFF0F5</option>
+												    <option>#B0C4DE</option>
+												     -->
+												     <option>#FFE4E1</option>
+												     <option>#A9A9A9</option>
+												     <option>#B0C4DE</option>
+												     <option>#F08080</option>
+												     <option>#8FBC8F</option>
+												     <option>#FFFACD</option>
+												     <option>#DEB887</option>
+												</datalist>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="usertd">描述：</td>
+		                                    <td>
+		                                        <input type="text" name="description" title="描述"
+		                                        style="width:98%;" th:value="${shift!=null?shift.description:''}"/>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td style="text-align: center;" colspan="10">
+		                                        <a class="btn btn-mini btn-primary" onclick="save()">保存</a>
+		                                        <a class="btn btn-mini btn-danger" onclick="top.Dialog.close();">取消</a>
+		                                    </td>
+		                                </tr>
+		                            </table>
+		                        </form>
+		                        <div id="zhongxin2" class="center" style="display:none">
+		                            <img th:src="@{/img/jzx.gif}" style="width: 50px;"><br/>
+		                            <h4 class="lighter block green"></h4>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>	
+	</body>
+</html>

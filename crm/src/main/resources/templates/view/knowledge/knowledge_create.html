@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑知识-CRM知识库管理系统</title>
+    <meta name="description" content="编辑知识--知识库管理系统">
+    <meta name="viewport" content="width=device-width, initial-scgale=1.0, maximum-scale=1.0" >
+    <link rel="icon" th:href="@{img/icon/bus3.ico}"/>
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-theme.css}" >
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/knowledge/web-base.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/knowledge/web-black.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/knowledge/default.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/knowledge/web-form.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/knowledge/jquery.fileupload.css}">
+    <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/bootstrapZtree/css/bootstrapStyle.css}" />
+    <link rel="stylesheet" th:href="@{/plugins/bootstrapTable/css/bootstrap-table.min.css}">
+</head>
+<body>
+<!--HEAD START-->
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="margin: 0px;">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" style="color: #ffffff; font-weight: bold; padding: 5px;" >
+                <img th:src="@{/img/knowledge/book1.png}" alt="知识库" height="40" align="middle">
+            </a>
+        </div>
+        <div class="navbar-collapse in" id="bs-example-navbar-collapse-1" style="height: auto;">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/knowMain">
+                        <span class="glyphicon glyphicon-home"></span> 首页
+                    </a>
+                </li>
+                <li>
+                    <a href="/knowType/13?order=createDate&sort=desc&showType=list">
+                        <span class="glyphicon glyphicon-book"></span> 知识
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="glyphicon glyphicon-bookmark"></span> 我的空间
+                    </a>
+                </li>
+                <!--<li>
+                    <a href="webquest/view/Pub1.html">
+                        <span class="glyphicon glyphicon-question-sign"></span> 问答
+                    </a>
+                </li>-->
+            </ul>
+            <ul class="nav navbar-nav navbar-right hidden-xs" style="margin-right: 10px;" shiro:hasPermission="know:add">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-plus"></span>知识/创建
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a target="_blank"  href="/addKnow">
+                                <span class="glyphicon glyphicon-book"></span>&nbsp;创建知识
+                            </a>
+                        </li>
+                        <!--<li>
+                            <a target="_blank" >
+                                <span class="glyphicon glyphicon-question-sign"></span>&nbsp;创建提问
+                            </a>
+                        </li>-->
+                        <!--<li>
+                            <a target="_blank">
+                                <span class="glyphicon glyphicon-cloud"></span>&nbsp;下载网页知识
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank">
+                                <span class="glyphicon glyphicon-folder-close"></span>&nbsp;上传资源知识
+                            </a>
+                        </li>-->
+                        <li>
+                            <a target="_blank">
+                                <span class="glyphicon glyphicon-file"></span>&nbsp;word创建知识
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;<shiro:principal property="name"/>
+                    </a>
+                </li>
+            </ul>
+            <form  method="post" action="/searchAllKnow" id="lucenesearchFormId" style="margin-top: 10px;" class="navbar-form navbar-right hidden-xs hidden-sm " role="search">
+                <div class="form-group">
+                    <div class="input-group" style="max-width: 200px;">
+                        <input type="text" name="word" id="wordId" value="" class="form-control input-sm" placeholder="检索词...">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>检索
+                            </button>
+				        </span>
+                    </div>
+                </div>
+                <!--<button type="submit" id="miniSearchPlusButtonId" class="btn btn-danger btn-sm">高级检索</button>-->
+            </form>
+        </div>
+    </div>
+</div>
+<!--HEAD END-->
+<div class="super_content">
+    <div id="showHomeMessageId" class="new-userMessage">
+    </div>
+</div>
+<!--CONTENT START -->
+<div class="containerbox" style="min-height: 125px;">
+<div class="container">
+    <div class="row column_box">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li class="active">知识</li>
+                        <li class="active" th:if="${know==null}">创建知识</li>
+                        <li class="active" th:if="${know!=null}">编辑知识</li>
+                    </ol>
+                </div>
+            </div>
+            <form id="konwForm" class="konwForm" role="form" method="post" action="/know">
+                <input type="hidden" name="resultType" value="1">
+               <!-- <input type="hidden" name="pastId" th:value="${know!=null}?${know.id}:'0'">
+                <input type="hidden" name="version" value="1">-->
+                <input type="hidden" name="_method" value="put" th:if="${know!=null}">
+                <input type="hidden" name="id" th:value="${know!=null}?${know.id}" th:if="${know!=null}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label   for="knowTitle">
+                                标题
+                                <span class="alertMsgClass">*</span>
+                            </label>
+                            <input th:value="${know!=null}?${know.knowTitle}" type="text" class="form-control" name="knowTitle" value="" id="knowTitle" placeholder="输入知识标题">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="knowType">
+                                文档分类
+                                <span class="alertMsgClass">*</span>
+                            </label>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <input type="text" th:value="${know!=null}?${know.knowType}" class="form-control" id="knowType" name="knowType" readonly="readonly" placeholder="选择文档分类" value="">
+                                        <input type="hidden"  th:value="${know!=null}?${know.knowTypeId}"  name="knowTypeId" id="knowTypeId" value="">
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-info"  data-target="#konwTypeModal" data-toggle="modal" type="button"  id="openChooseTypeButtonId" >选择分类</button>
+                                            <button class="btn btn-info "  data-toggle="modal" style="display: none;" id="openChooseDemoButtonId">加载模板</button>
+                                        </div>
+                                    </div>
+                                    <div id="knowtypeValidId"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-info"  style="display: block;">
+                            <div class="panel-heading">
+                                <b>知识内容</b>
+                                <input type="hidden">
+                            </div>
+                            <div class="panel-body" style="background-color: #e1edf3;">
+                                <div class="row" >
+                                    <div class="col-md-12">
+                                        <input type="hidden" name="konwContent" id="content1">
+                                        <input type="hidden" name="konwContentTxt" id="content2">
+                                        <div id="konwContent" style="background-color: #FFF;"></div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row hidden-xs">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="knowTag"> 标签 </label>
+                                            <input type="text" th:value="${know!=null}?${know.knowTag}" class="form-control" id="knowTag" value="" name="knowTag" placeholder="输入类别标签,或从下方选择标签,多个标签间用/分隔">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hidden-xs" th:id="tagDiv" style="display: none">
+                                    <div class="col-md-12" >
+                                        <div class="form-group taglistBox" >
+                                            <div id="taglistboxId">
+                                                <span id="tagName" style="font-weight: bold;"></span>
+                                             </div>
+                                         </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading center-block webfile-buttonplus" style="height: 50px;">
+                                <div class="form-group" style="float: left;">
+                                </div>
+                                <div style="float: right;">
+                                    <span class="btn btn-info fileinput-button">
+	                                    <span>批量上传文件</span>
+	                                    <span id="html5uploadProsess">100%</span>
+	                                    <input id="fileupload" type="file" name="konwFile"  multiple="">
+                                        <input type="hidden" name="knowFileIds" id="knowFileIds" th:value="${know!=null}?${know.knowFileIds}">
+                                        <input type="hidden" name="knowFileNames" id="knowFileNames"  th:value="${know!=null}?${know.knowFileNames}">
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div id="fileQueue">
+                                    <div class="center-block text-center blocktip-title">
+                                        <i class="glyphicon glyphicon-paperclip"></i>请上传资源附件
+                                        <br>
+                                        <span>允许上传附件类型为
+                                            <b>png,jpg,jpeg,zip,doc,docx,xls,xlsx,pdf,ppt,pptx,web,rar,txt,flv,mp3,mp4,dcr
+                                            </b>，最大2048M
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row" id="fileListId" style="padding: 5px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="beforeImg"> 上传预览图 </label>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="ke-inline-block btn btn-info btn-xs center-block">
+                                        <div class="ke-upload-area ke-form" method="post" enctype="multipart/form-data"   style="width: 48px;" action="">
+                                            <span class="ke-button-common">
+                                                <input type="button" class="ke-button-common ke-button" value="上传">
+                                            </span>
+                                            <input type="file" class="ke-upload-file" id="knowImg" tabindex="-1">
+                                        </div>
+                                    </div>
+                                    <input type="button" id="uploadButton" class="btn btn-info btn-xs center-block" style="padding: 0px 0px 8px; display: none;" value="上传">
+                                    <input type="hidden"  name="knowImg" id="beforeImg" th:value="${know!=null}?${know.knowImg}">
+                                    <button type="button" id="showImg" class="btn btn-info btn-sm" title="" data-container="body" data-toggle="popover" data-placement="bottom" data-trigger="focus" style="display: none;" data-content="<img class='img-thumbnail center-block' style='width:270px;' />" data-original-title="预览">预览</button>
+                                    <button type="button" id="delImg" class="btn btn-info btn-sm" title="删除图片" style="display: none;">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 hidden-xs">
+                        <div class="form-group">
+                            <label for="relationKnowId"> 关联知识 </label>
+                            <div class="row">
+                                <div id="docrelation_tagbox" class="col-md-12"></div>
+                            </div>
+                            <div class="row">
+                                <input type="hidden" name="relationKnowId" value="" id="relationKnowId">
+                                <div class="col-md-12">
+                                    <button class="btn btn-info btn-sm" data-toggle="modal" id="openaAddRelationButtonId">添加关联知识</button>
+                                    <button class="btn btn-info btn-sm" data-toggle="modal" id="creatWebFileButtonId">创建关联资源知识</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding-left: 12px; padding-right: 12px;">
+                    <div class="col-xs-4" style="padding: 2px;">
+                        <div class="form-group">
+                            <label for="publish"> 发布到部门</label>
+                            <select class="form-control" name="publish" id="publish" >
+                                <option onclick="addAllDepar()" value="0" th:selected="${know!=null}?${know.publish==0}">~无~</option>
+                                <option onclick="addDepar()" value="1" th:selected="${know!=null}?${know.publish==1}">~请选择部门~</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-4" style="padding: 2px;">
+                        <div class="form-group">
+                            <label for="editPerm">
+                                编辑权限
+
+                            </label>
+                            <select class="form-control" name="editPerm" id="editPerm" >
+                                <option value="0" onclick="addRoleEditPerm(0)" th:selected="${know!=null}?${know.editPerm==0}">~请选择~</option>
+                                <!--<option value="1">~分类权限~</option>-->
+                                <option value="1" onclick="addRoleEditPerm(1)" th:selected="${know!=null}?${know.editPerm==1}">~创建人~</option>
+                                <!--<option value="2">~部门~</option>-->
+                                <option value="2" onclick="addRoleEditPerm(2)" th:selected="${know!=null}?${know.editPerm==2}">~角色~</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-4" style="padding: 2px;">
+                        <div class="form-group">
+                            <label for="readPerm">
+                                阅读权限
+                            </label>
+                            <select class="form-control" name="readPerm" id="readPerm" >
+                                <option value="0" onclick="addRoleReadPerm(0)" th:selected="${know!=null}?${know.readPerm==0}">~请选择~</option>
+                               <!-- <option value="1">分类权限</option>-->
+                                <option value="1" onclick="addRoleReadPerm(1)" th:selected="${know!=null}?${know.readPerm==1}">创建人</option>
+                                <!--<option value="2">部门</option>-->
+                                <option value="2" onclick="addRoleReadPerm(2)" th:selected="${know!=null}?${know.readPerm==2}">角色</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row hidden-xs">
+                    <div class="col-md-12" >
+                        <div class="form-group taglistBox">
+                            <input type="hidden" id="publishDepIds" name="publishDepIds" th:value="${know!=null}?${know.publishDepIds}" >
+                            <div id="depDiv">
+                                <span style="font-weight: bold;">发布的部门：</span>
+                                <span class="label label-default wcp-tag" th:if="${deps1==null}">
+                                    所有部门
+                                </span>
+                                <span th:if="${deps1!=null}" th:each="dep:${deps1}" th:attr="id='dep_'+${dep.depId}" class="label label-default wcp-tag" >[[${dep.depName}]]
+                                    <span th:onclick="'javascript:removeDep('+${dep.depId}+',this)'" class="glyphicon glyphicon-remove tagbutton"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row hidden-xs">
+                    <div class="col-md-12" >
+                        <div class="form-group taglistBox">
+                            <input type="hidden" id="editRoleIds" name="editRoleIds" th:value="${know!=null}?${know.editRoleIds}">
+                            <div id="editPermDiv">
+                                <span style="font-weight: bold;">编辑权限：</span>
+                                <span class="label label-default wcp-tag" >所有人</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row hidden-xs">
+                    <div class="col-md-12" >
+                        <div class="form-group taglistBox">
+                            <input type="hidden" id="readRoleIds" name="readRoleIds" th:value="${know!=null}?${know.readRoleIds}">
+                            <div id="readPermDiv" >
+                                <span style="font-weight: bold;">阅读权限：</span>
+                                <span class="label label-default wcp-tag" >所有人</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row column_box">
+                    <div class="col-md-2">
+                        <button type="button" id="knowSubmitId" class="btn btn-info btn-lg ">提交</button>
+                    </div>
+                </div>
+                <div class="row column_box">
+                    <div class="col-md-12"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+<!--CONTENT END -->
+
+<div class="modal fade" id="konwTypeModal" tabindex="-1" role="dialog" aria-labelledby="konwTypeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title" id="konwTypeLabel">
+                    选择知识分类
+                </h4>
+            </div>
+            <div class="modal-body">
+                <ul class="doctypeUl" style="max-height: 400px; overflow: auto;" >
+                    <li th:each="konwType:${types}" th:if="${konwType.parentId==13}">
+                        <h5 class="showLableType3">
+                            <a class="linkTitle linklevel1" th:id="${konwType.id}" th:attr="knowTags=${konwType.title}" th:text="${konwType.text}" onclick="clickType(this)"></a>
+                            <a th:if="${konwType.hasMenu}" class="glyphicon farm_tree_flag  farm_tree_s glyphicon-chevron-down"  onclick="clickTreeFlag(this)">
+                            </a>
+                        </h5>
+                        <ul style="display:none;" th:if="${konwType.hasMenu}" >
+                            <li th:each="konwType1:${konwType.getSonTypes()}">
+                                <h5 class="showLableType3">
+                                    <a class="linkTitle linklevel2" th:id="${konwType1.id}" th:text="${konwType1.text}" onclick="clickType(this)">
+                                    </a>
+                                    <a th:if="${konwType1.hasMenu}" class="glyphicon farm_tree_flag  farm_tree_s glyphicon-chevron-down"  onclick="clickTreeFlag(this)">
+                                    </a>
+                                </h5>
+                                <ul style="display:none;" th:if="${konwType1.hasMenu}">
+                                    <li th:each="konwType2:${konwType1.getSonTypes()}">
+                                        <a class="linkTitle linklevel2" th:id="${konwType2.id}" th:text="${konwType2.text}" onclick="clickType(this)">
+                                        </a>
+                                        <span class="farm_tree_num" th:if="${konwType2.hasMenu}" th:text="${konwType2.sonTypes.size()}">0</span>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="depModal" tabindex="-1" role="dialog" aria-labelledby="depLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title" id="depLabel">
+                    选择部门
+                </h4>
+            </div>
+            <div class="modal-body" style="max-height: 400px; overflow: auto;">
+                <ul id="depTree" class="ztree"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary"  id="saveDep" >
+                    保存
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="roleLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title" id="roleLabel">
+                    选择角色
+                </h4>
+            </div>
+            <div class="modal-body" style="max-height: 400px; overflow: auto;">
+                <ul id="roleTree" class="ztree"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary"  id="saveEditRole" >
+                    保存
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="roleReadModal" tabindex="-1" role="dialog" aria-labelledby="roleReadLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title" id="roleReadLabel">
+                    选择角色
+                </h4>
+            </div>
+            <div class="modal-body" style="max-height: 400px; overflow: auto;">
+                <ul id="roleReadTree" class="ztree"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary"  id="saveReadRole" >
+                    保存
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="foot">
+    知识管理系统-V1.0.0
+</div>
+<script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}" ></script>
+<script th:src="@{/plugins/wangEditor/wangEditor.js}"></script>
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<script th:src="@{/plugins/upload/jquery.ui.widget.js}"></script>
+<script th:src="@{/plugins/upload/jquery.iframe-transport.js}"></script>
+<script th:src="@{/plugins/upload/jquery.fileupload.js}"></script>
+<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.core.js}"></script>
+<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.excheck.js}"></script>
+<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.exedit.js}"></script>
+<script th:src="@{/plugins/tips/jquery.tips.js}"></script>
+<script th:inline="javascript">
+$(function() {
+
+    var zNodes = [[${deps}]];
+    zNodes = eval(zNodes);
+    zNodes[0].open="true";
+    var roleNodes = [[${roles}]];
+    roleNodes = eval(roleNodes);
+    roleNodes[0].open="true";
+    var setting = {
+        view: {
+            selectedMulti: false
+        },
+        check: {
+            enable: true
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        edit: {
+            enable: false
+        }
+    };
+    var rolezTree = $.fn.zTree.init($("#roleTree"), setting, roleNodes);
+    var roleReadzTree = $.fn.zTree.init($("#roleReadTree"), setting, roleNodes);
+    var zTree = $.fn.zTree.init($("#depTree"), setting, zNodes);
+
+    $("#knowFileIds").val("");
+    $("#knowFileNames").val("");
+    $("#publishDepIds").val("");
+    $("#editRoleIds").val("");
+    toastr.options = {
+        closeButton: true,                                            // 是否显示关闭按钮，（提示框右上角关闭按钮）
+        debug: false,                                                    // 是否使用deBug模式
+        progressBar: true,                                            // 是否显示进度条，（设置关闭的超时时间进度条）
+        positionClass: "toast-bottom-right",              // 设置提示款显示的位置
+        onclick: null,                                                     // 点击消息框自定义事件
+        showDuration: "300",                                      // 显示动画的时间
+        hideDuration: "1000",                                     //  消失的动画时间
+        timeOut: "1000",                                             //  自动关闭超时时间
+        extendedTimeOut: "1000",                             //  加长展示时间
+        showEasing: "swing",                                     //  显示时的动画缓冲方式
+        hideEasing: "linear",                                       //   消失时的动画缓冲方式
+        showMethod: "fadeIn",                                   //   显示时的动画方式
+        hideMethod: "fadeOut"                                   //   消失时的动画方式
+    };
+    var E = window.wangEditor;
+    var editor = new E('#konwContent');
+    editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
+    editor.create();
+    var know = [[${know}]];
+    if(know!=null){
+        $("#content1").val(know.konwContent);
+        $("#content2").val(know.knowContentTxt);
+        editor.txt.html(know.konwContent);
+        if(know.knowFileNames!=null &&know.knowFileNames!=""){
+            var fids  = know.knowFileIds.split("/");
+            var fnames = know.knowFileNames.split("/");
+            $.each(fnames,function (i,o) {
+                var imgUrl = "http://localhost:8081/upload/knowledge/"+o;
+                var fileName=o.split("knowFile")[1];
+                var fileId = fids[i];
+                addFileNode(imgUrl, fileName, fileId)
+            })
+        }
+        if(know.knowImg!=null &&know.knowImg!=""){
+            $("#showImg").attr("style", "visibility: visible;");
+            $("#delImg").attr("style", "visibility: visible;");
+            $("#showImg").attr("data-content","<img class='img-thumbnail center-block' style='width:270px;' alt='预览图' src='"+know.knowImg+"' />");
+            $("[data-toggle='popover']").popover({
+                html : true
+            });
+        }
+        if(know.editPerm==1){
+            $("#editPermDiv").empty();
+            $("#editPermDiv").append('<span style="font-weight: bold;">编辑权限：</span><span class="label label-default wcp-tag"> 创建人</span>');
+        }else if(know.editPerm==2){
+            var roles1 = [[${roles1}]];
+            $.each(roles1,function (i,o) {
+                $("#editPermDiv").append('<span id="editRole_'+o.roleId+'" class="label label-default wcp-tag">'+o.roleName+'<span onclick="removeEditRole(&apos;'+o.roleId+'&apos;,this)" class="glyphicon glyphicon-remove tagbutton"></span></span>');
+            })
+        }
+        if(know.readPerm==1){
+            $("#readPermDiv").empty();
+            $("#readPermDiv").append('<span style="font-weight: bold;">编辑权限：</span><span class="label label-default wcp-tag"> 创建人</span>');
+        }else if(know.readPerm==2){
+            var roles2 = [[${roles2}]];
+            console.log(roles2)
+            $.each(roles2,function (i,o) {
+                $("#readPermDiv").append('<span id="readRole_'+o.roleId+'" class="label label-default wcp-tag">'+o.roleName+'<span onclick="removeReadRole(&apos;'+o.roleId+'&apos;,this)" class="glyphicon glyphicon-remove tagbutton"></span></span>');
+            })
+        }
+
+    }
+    $('#fileupload').fileupload({
+        type:"post",
+        url : "/knowUpload",
+        dataType : 'json',
+        done : function(e, data) {
+            var url = data.result.url;
+            var id = data.result.id;
+            var fileName = data.result.fileName;
+            var realName = data.result.realName;
+            var vals = $("#knowFileIds").val();
+            var b = $("#knowFileNames").val();
+            if($.trim(vals)==""){
+                $("#knowFileIds").val(id);
+            }else{
+                $("#knowFileIds").val(vals+"/"+id);
+            }
+            if($.trim(b)==""){
+                $("#knowFileNames").val(realName);
+            }else{
+                $("#knowFileNames").val(b+"/"+realName);
+            }
+            addFileNode(url, decodeURIComponent(fileName),
+                id);
+        },
+        progressall : function(e, data) {
+            var progress = parseInt(data.loaded
+                / data.total * 100, 10);
+            $('#html5uploadProsess').text(progress + '%');
+        }
+    });
+    $("#knowImg").on("change",function (e) {
+        var file =  e.target.files[0];
+        var fileName = $("#knowImg").val()
+        var a = (fileName).lastIndexOf(".");
+        var b = ($("#knowImg").val()).substring(a+1,fileName.length);
+        if(b=='png' ||b=='jpg'||b=='jpeg'||b=="gif"){
+            $("#showImg").attr("style", "visibility: visible;");
+            $("#delImg").attr("style", "visibility: visible;");
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = function () {
+                // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+                var dataURL = reader.result;
+                $("#beforeImg").val(dataURL);
+                $("#showImg").attr("data-content","<img class='img-thumbnail center-block' style='width:270px;' alt='预览图' src='"+dataURL+"' />");
+                $("[data-toggle='popover']").popover({
+                    html : true
+                });
+            };
+        }else{
+            toastr.error("文件类型错误，允许的类型为：PNG,JPG,JPEG,GIF");
+            return ;
+        }
+    })
+    $("#delImg").on("click",function () {
+        $("#beforeImg").val("");
+        $("#showImg").attr("style", "visibility: hidden;");
+        $("#delImg").attr("style", "visibility: hidden;");
+        $("[data-toggle='popover']").popover('hide');
+    })
+
+    //选择发布的部门
+    $("#saveDep").on("click",function () {
+        $("#publishDepIds").val("");
+        var nodes = zTree.getCheckedNodes(true);
+        $("#depDiv").empty();
+        $("#depDiv").append('<span style="font-weight: bold;">发布到部门：</span>');
+        var val = "";
+        $.each(nodes,function (i,o) {
+            $("#depDiv").append('<span id="dep_'+o.id+'" class="label label-default wcp-tag">'+o.name+'<span onclick="removeDep(&apos;'+o.id+'&apos;,this)" class="glyphicon glyphicon-remove tagbutton"></span></span>');
+            if(i==0){
+                val =o.id;
+            }else{
+                val+=","+o.id;
+            }
+        })
+        $("#publishDepIds").val(val);
+        $("#depModal").modal("hide");
+    })
+
+    //编辑权限
+    $("#saveEditRole").on("click",function () {
+        var roleNodes = rolezTree.getCheckedNodes(true);
+        $("#editPermDiv").empty();
+        $("#editPermDiv").append('<span style="font-weight: bold;">编辑权限：</span>');
+        var val = "";
+        $.each(roleNodes,function (i,o) {
+            $("#editPermDiv").append('<span id="editRole_'+o.id+'" class="label label-default wcp-tag">'+o.name+'<span onclick="removeEditRole(&apos;'+o.id+'&apos;,this)" class="glyphicon glyphicon-remove tagbutton"></span></span>');
+            if(i==0){
+                val =o.id;
+            }else{
+                val+=","+o.id;
+            }
+        })
+        $("#editRoleIds").val(val);
+        $("#roleModal").modal("hide");
+    })
+
+    $("#saveReadRole").on("click",function () {
+        var roleNodes = roleReadzTree.getCheckedNodes(true);
+        $("#readPermDiv").empty();
+        $("#readPermDiv").append('<span style="font-weight: bold;">阅读权限：</span>');
+        var val ="";
+        $.each(roleNodes,function (i,o) {
+            $("#readPermDiv").append('<span id="readRole_'+o.id+'" class="label label-default wcp-tag">'+o.name+'<span onclick="removeReadRole(&apos;'+o.id+'&apos;,this)" class="glyphicon glyphicon-remove tagbutton"></span></span>');
+            if(i==0){
+                val =o.id;
+            }else{
+                val+=","+o.id;
+            }
+        })
+        $("#readRoleIds").val(val);
+        $("#roleReadModal").modal("hide");
+    })
+
+    $("#knowSubmitId").on("click",function(){
+        if($("#knowTitle").val()==""){
+            $("#knowTitle").tips({
+                side:3,
+                msg:'输入知识标题',
+                bg:'#AE81FF',
+                time:2
+            });
+            $("#knowTitle").focus();
+            return false;
+        }
+        if($("#knowType").val()==""){
+            $("#knowType").tips({
+                side:3,
+                msg:'输入知识分类',
+                bg:'#AE81FF',
+                time:2
+            });
+            $("#knowType").focus();
+            return false;
+        }
+        $("#content1").val(editor.txt.html());
+        $("#content2").val(editor.txt.text());
+        $("#konwForm").submit();
+    })
+});
+
+    function addFileNode(imgUrl, fileName, fileId) {
+        $('.blocktip-title').hide();
+        var html = '<div class="col-md-3 file-block-box"   id="file_'+fileId+'">';
+        html = html + '		<div class="stream-item" >';
+        html = html + '				<div class="media">';
+        html = html + '					<div class="pull-left">';
+        html = html + '						<img  alt="'+fileName+'" src="'+imgUrl+'">';
+        html = html + '					</div>';
+        html = html + '					<div class="media-body" >';
+        html = html + '							<i onclick="removeFile(\'' + fileId
+            + '\');" class="glyphicon glyphicon-remove pull-right" ></i>';
+        html = html + '						<div class="file-title" >' + fileName + '</div>';
+        html = html + '					</div>';
+        html = html + '				</div>';
+        html = html + '		</div>';
+        html = html
+            + '<input type="hidden" name="fileId" value="'+fileId+'" /></div>';
+        $('#fileListId').append(html);
+    }
+
+    //删除附件列表中的一个附件
+    function removeFile(fileId) {
+        //判断附件是否上传
+        $.ajax({
+            type:"post",
+            url:"/file/"+fileId,
+            data:{"_method":"delete"},
+            success:function () {
+                var a = $("#knowFileIds").val();
+                console.log(a.indexOf(fileId));
+                if(a.indexOf(fileId)!=-1){
+                    if(a.indexOf(fileId)==0){
+                        a=a.replace(fileId,"");
+                        $("#knowFileIds").val(a);
+                    }else{
+                        a=a.replace("/"+fileId,"");
+                        $("#knowFileIds").val(a);
+                    }
+                }
+                $("#file_" + fileId).remove();
+                if ($("input[name='fileId']").length == 0) {
+                    $('.blocktip-title').show();
+                }
+            }
+        })
+    }
+    
+    function clickType(obj) {
+        $('#konwTypeModal').modal('hide');
+        $("#knowType").val($(obj).text());
+        $("#knowTypeId").val(obj.id);
+        $("#tagName").text($(obj).text()+":");
+        $("#tagDiv").show();
+        console.log($(obj).attr("knowTags"));
+        if($(obj).attr("knowTags")!=null){
+            var tags =$(obj).attr("knowTags").split("/");
+            for (var i = 0; i <tags.length ; i++) {
+                $("#taglistboxId").append("<span class='label label-default wcp-tag' onclick='addTag(this)'>"+tags[i]+"</span>");
+            }
+        }else{
+        }
+
+    }
+
+    function clickTreeFlag(obj) {
+        if($(obj).hasClass("glyphicon-chevron-down")){
+            $(obj).removeClass("glyphicon-chevron-down");
+            $(obj).addClass("glyphicon-chevron-up");
+            $(obj).parent().next().css("display","block");
+        }else  if($(obj).hasClass("glyphicon-chevron-up")){
+            $(obj).removeClass("glyphicon-chevron-up");
+            $(obj).addClass("glyphicon-chevron-down");
+            $(obj).parent().next().css("display","none");
+        }
+    }
+
+    function addTag(obj) {
+        var val = $("#knowTag").val();
+        if($.trim(val)!=""){
+            $("#knowTag").val(val+"/"+$(obj).text());
+        }else{
+            $("#knowTag").val($(obj).text());
+        }
+
+    }
+
+    function addDepar() {
+        $("#depModal").modal({keyboard : false});
+    }
+    
+    function addAllDepar() {
+       $("#depDiv").empty();
+       $("#depDiv").append('<span style="font-weight: bold;">发布的部门：</span><span class="label label-default wcp-tag">所有部门</span>');
+       $("#publishDepIds").val("");
+    }
+
+    function removeDep(id,obj) {
+        var val = $("#publishDepIds").val();
+        $("#dep_"+id).remove();
+        val=val.replace(","+id,"");
+        $("#publishDepIds").val(val);
+        if($("#depDiv .wcp-tag").length==0){
+            $("#publishDepIds").val("");
+            $("#depDiv").append('<span class="label label-default wcp-tag">所有部门</span>');
+        }
+    }
+    
+    function  removeEditRole(id,obj) {
+        var val = $("#editRoleIds").val();
+        val=val.replace(","+id,"");
+        $("#editRoleIds").val(val);
+        $("#editRole_"+id).remove();
+        if($("#editPermDiv .wcp-tag").length==0){
+            $("#editRoleIds").val("");
+            $("#editPermDiv").append('<span class="label label-default wcp-tag">所有人</span>');
+        }
+    }
+
+    function  removeReadRole(id,obj) {
+        var val = $("#readRoleIds").val();
+        val=val.replace(","+id,"");
+        $("#readRoleIds").val(val);
+        $("#readRole_"+id).remove();
+        if($("#readPermDiv .wcp-tag").length==0){
+            $("#readRoleIds").val("");
+            $("#readPermDiv").append('<span class="label label-default wcp-tag">所有人</span>');
+        }
+    }
+
+    function addRoleEditPerm(index) {
+        $("#editRoleIds").val("");
+        $("#editPermDiv").empty();
+        if(index==0){
+            $("#editPermDiv").append('<span style="font-weight: bold;">编辑权限：</span><span class="label label-default wcp-tag"> 所有人</span>');
+        }
+        if(index==1){
+            $("#editPermDiv").append('<span style="font-weight: bold;">编辑权限：</span><span class="label label-default wcp-tag"> 创建人</span>');
+        }
+        if(index==2){
+            $("#roleModal").modal({keyboard : false});
+        }
+    }
+
+function addRoleReadPerm(index) {
+    $("#readRoleIds").val("");
+    $("#readPermDiv").empty();
+    if(index==0){
+        $("#readPermDiv").append('<span style="font-weight: bold;">阅读权限：</span><span class="label label-default wcp-tag"> 所有人</span>');
+    }
+    if(index==1){
+        $("#readPermDiv").append('<span style="font-weight: bold;">阅读权限：</span><span class="label label-default wcp-tag"> 创建人</span>');
+    }
+    if(index==2){
+        $("#roleReadModal").modal({keyboard : false});
+    }
+}
+</script>
+</body>
+</html>

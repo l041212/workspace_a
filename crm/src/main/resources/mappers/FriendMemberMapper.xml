@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zh.crm.mapper.FriendMemberMapper">
+
+	<resultMap id="BaseResultMap" type="com.zh.crm.entity.FriendMember">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="type_id" property="typeId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="INTEGER" />
+		<result column="identity" property="identity" jdbcType="VARCHAR" />
+		<result column="birthday" property="birthday" jdbcType="TIMESTAMP" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="education" property="education" jdbcType="INTEGER" />
+		<result column="job" property="job" jdbcType="INTEGER" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="post" property="post" jdbcType="VARCHAR" />
+		<result column="line" property="line" jdbcType="VARCHAR" />
+		<result column="destination" property="destination" jdbcType="VARCHAR" />
+		<result column="apply_time" property="applyTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<association property="type" resultMap="com.zh.crm.mapper.TypeMapper.BaseResultMap" columnPrefix="t_" />
+	</resultMap>
+	
+	<sql id="BaseColumnList">
+		fm.id, fm.type_id, fm.name, fm.sex, fm.identity, fm.birthday, fm.phone, fm.email, fm.address, 
+		fm.education, fm.job, fm.company, fm.post, fm.line, fm.destination, fm.apply_time, fm.status,
+		t.id t_id, t.text t_text, t.value t_value, t.title t_title, t.parentId t_parentId, t.parentName t_parentName, t.status t_status 
+	</sql>
+	
+	<sql id="BaseTable">
+		t_friend_member fm left join sys_type t on fm.type_id = t.id 
+	</sql>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select <include refid="BaseColumnList" /> 
+		from <include refid="BaseTable" /> 
+		where fm.id = #{id, jdbcType=INTEGER}
+	</select>
+	
+	<select id="findAllFriendMember" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select <include refid="BaseColumnList" />
+		from <include refid="BaseTable" /> 
+		<where>
+			<if test="keywords != null and keywords != ''">
+		      and (
+			      fm.name like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      fm.identity like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      fm.phone like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      fm.email like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      fm.address like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      fm.company like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      fm.post like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      fm.line like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      fm.destination like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+		      )
+		    </if>
+			<if test="birthdayFrom != null">
+				and fm.birthday &gt;=  #{birthdayFrom, jdbcType=TIMESTAMP})
+			</if>
+			<if test="birthdayTo != null">
+				and fm.birthday &lt;=  #{birthdayTo, jdbcType=TIMESTAMP})
+			</if>
+			<if test="applyTimeFrom != null">
+				and fm.apply_time &gt;=  #{applyTimeFrom, jdbcType=TIMESTAMP})
+			</if>
+			<if test="applyTimeTo != null">
+				and fm.apply_time &lt;=  #{applyTimeTo, jdbcType=TIMESTAMP})
+			</if>
+			<if test="typeId != null and typeId > 0">
+				and fm.type_id = #{typeId, jdbcType=INTEGER}
+			</if>
+			<if test="sex != null and sex > 0">
+				and fm.sex = #{sex, jdbcType=INTEGER}
+			</if>
+			<if test="education != null and education > 0">
+				and fm.education = #{education, jdbcType=INTEGER}
+			</if>
+			<if test="job != null and job > 0">
+				and fm.job = #{job, jdbcType=INTEGER}
+			</if>
+			<if test="status != null">
+				and fm.status = #{status, jdbcType=INTEGER}
+			</if>
+		</where>
+		<choose>
+			<when test="sort == 'name'">order by fm.name</when>
+			<when test="sort == 'type'">order by fm.type_id</when>
+			<when test="sort == 'birthday'">order by fm.birthday</when>
+			<otherwise>order by fm.apply_time</otherwise>
+		</choose>
+		<choose>
+			<when test="order == 'desc'">desc</when>
+			<otherwise>asc</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insertSelective" parameterType="java.util.Map">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into t_friend_member
+			<trim prefix="(" suffix=")" suffixOverrides=",">
+				<if test="typeId != null">
+					type_id,
+				</if>
+				<if test="name != null and name != ''">
+					name,
+				</if>
+				<if test="sex != null">
+					sex,
+				</if>
+				<if test="identity != null and identity != ''">
+					identity,
+				</if>
+				<if test="birthday != null">
+					birthday,
+				</if>
+				<if test="phone != null and phone != ''">
+					phone,
+				</if>
+				<if test="email != null and email != ''">
+					email,
+				</if>
+				<if test="address != null and address != ''">
+					address,
+				</if>
+				<if test="education != null">
+					education,
+				</if>
+				<if test="job != null">
+					job,
+				</if>
+				<if test="company != null and company != ''">
+					company,
+				</if>
+				<if test="post != null and post != ''">
+					post,
+				</if>
+				<if test="line != null and line != ''">
+					line,
+				</if>
+				<if test="destination != null and destination != ''">
+					destination,
+				</if>
+				<if test="applyTime != null">
+					apply_time,
+				</if>
+				<if test="status != null">
+					status,
+				</if>
+			</trim>
+			<trim prefix="values (" suffix=")" suffixOverrides=",">
+				<if test="typeId != null">
+					#{typeId, jdbcType=INTEGER},
+				</if>
+				<if test="name != null and name != ''">
+					#{name, jdbcType=VARCHAR},
+				</if>
+				<if test="sex != null">
+					#{sex, jdbcType=INTEGER},
+				</if>
+				<if test="identity != null and identity != ''">
+					#{identity, jdbcType=VARCHAR},
+				</if>
+				<if test="birthday != null">
+					#{birthday, jdbcType=TIMESTAMP},
+				</if>
+				<if test="phone != null and phone != ''">
+					#{phone, jdbcType=VARCHAR},
+				</if>
+				<if test="email != null and email != ''">
+					#{email, jdbcType=VARCHAR},
+				</if>
+				<if test="address != null">
+					#{address, jdbcType=INTEGER},
+				</if>
+				<if test="education != null">
+					#{education, jdbcType=INTEGER},
+				</if>
+				<if test="job != null">
+					#{job, jdbcType=INTEGER},
+				</if>
+				<if test="company != null and company != ''">
+					#{company, jdbcType=VARCHAR},
+				</if>
+				<if test="post != null and post != ''">
+					#{post, jdbcType=VARCHAR},
+				</if>
+				<if test="line != null and line != ''">
+					#{line, jdbcType=VARCHAR},
+				</if>
+				<if test="destination != null and destination != ''">
+					#{destination, jdbcType=VARCHAR},
+				</if>
+				<if test="applyTime!= null">
+					#{applyTime, jdbcType=TIMESTAMP},
+				</if>
+				<if test="status != null">
+					#{status, jdbcType=INTEGER},
+				</if>
+			</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="java.util.Map">
+		update t_friend_member
+		<set>
+			<if test="typeId != null">
+				type_id = #{typeId, jdbcType=INTEGER},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex, jdbcType=INTEGER},
+			</if>
+			<if test="identity != null and identity != ''">
+				identity = #{identity, jdbcType=VARCHAR},
+			</if>
+			<if test="birthday != null">
+				birthday = #{birthday, jdbcType=TIMESTAMP},
+			</if>
+			<if test="phone != null and phone != ''">
+				phone = #{phone, jdbcType=VARCHAR},
+			</if>
+			<if test="email != null and email != ''">
+				email = #{email, jdbcType=VARCHAR},
+			</if>
+			<if test="address != null and address != ''">
+				address = #{address, jdbcType=VARCHAR},
+			</if>
+			<if test="education != null">
+				education = #{education, jdbcType=INTEGER},
+			</if>
+			<if test="job != null">
+				job = #{job, jdbcType=INTEGER},
+			</if>
+			<if test="company != null and company != ''">
+				company = #{company, jdbcType=VARCHAR},
+			</if>
+			<if test="post != null and post != ''">
+				post = #{post, jdbcType=VARCHAR},
+			</if>
+			<if test="line != null and line != ''">
+				line = #{line, jdbcType=VARCHAR},
+			</if>
+			<if test="destination != null and destination != ''">
+				destination = #{destination, jdbcType=VARCHAR},
+			</if>
+			<if test="applyTime != null">
+				apply_time = #{applyTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				status = #{status, jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id, jdbcType=INTEGER}
+	</update>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from t_friend_member
+		where id = #{id, jdbcType=INTEGER}
+	</delete>
+
+</mapper>

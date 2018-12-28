@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${know.knowTitle}+--知识库管理系统"></title>
+    <meta name="description" content="知识库管理系统的首页">
+    <meta name="viewport" content="width=device-width, initial-scgale=1.0, maximum-scale=1.0" >
+    <link rel="icon" th:href="@{/img/icon/bus3.ico}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-theme.css}" >
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/knowledge/web-base.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/knowledge/web-black.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/knowledge/default.css}">
+    <link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="margin: 0px;">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" style="color: #ffffff; font-weight: bold; padding: 5px;" >
+                <img th:src="@{/img/knowledge/book1.png}" alt="知识库" height="40" align="middle">
+            </a>
+        </div>
+        <div class="navbar-collapse in" id="bs-example-navbar-collapse-1" style="height: auto;">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/knowMain">
+                        <span class="glyphicon glyphicon-home"></span> 首页
+                    </a>
+                </li>
+                <li>
+                    <a href="/knowType/13?order=createDate&sort=desc&showType=list">
+                        <span class="glyphicon glyphicon-book"></span> 知识
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="glyphicon glyphicon-bookmark"></span> 我的空间
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right hidden-xs" style="margin-right: 10px;" shiro:hasPermission="know:add">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-plus"></span>知识/创建
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a target="_blank" href="/addKnow">
+                                <span class="glyphicon glyphicon-book"></span>&nbsp;创建知识
+                            </a>
+                        </li>
+                        <!--<li>
+                            <a target="_blank" >
+                                <span class="glyphicon glyphicon-question-sign"></span>&nbsp;创建提问
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank">
+                                <span class="glyphicon glyphicon-cloud"></span>&nbsp;下载网页知识
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank">
+                                <span class="glyphicon glyphicon-folder-close"></span>&nbsp;上传资源知识
+                            </a>
+                        </li>-->
+                        <li>
+                            <a target="_blank">
+                                <span class="glyphicon glyphicon-file"></span>&nbsp;word创建知识
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;<shiro:principal property="name"/>
+                    </a>
+                </li>
+            </ul>
+            <form  method="post" id="lucenesearchFormId" action="/searchAllKnow" style="margin-top: 10px;" class="navbar-form navbar-right hidden-xs hidden-sm " role="search">
+                <div class="form-group">
+                    <div class="input-group" style="max-width: 200px;">
+                        <input type="text" name="word" id="wordId" value="" class="form-control input-sm" placeholder="检索词...">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>检索
+                            </button>
+				        </span>
+                    </div>
+                </div>
+               <!-- <button type="submit" id="miniSearchPlusButtonId" class="btn btn-danger btn-sm">高级检索</button>-->
+            </form>
+        </div>
+    </div>
+</div>
+<div class="super_content">
+    <div id="showHomeMessageId" class="new-userMessage">
+    </div>
+</div>
+<div class="containerbox" style="min-height: 125px;">
+<div class="container">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-12 clear-both" th:if="${!readPerm}" style="min-height: 400px;">
+            <div class="row">
+                <div class="well">
+                    <h1 style="color:blue; text-align: center;margin-top: 50px;">您好，您没有阅读权限！</h1>
+                    <p style="color:blue; text-align: center" class="lead">
+                       <!-- <b>如需要阅读此篇文章请联系管理员</b>-->
+                    </p>
+                </div>
+                <br>
+                <div class="well">
+                    <h1 style="color:blue; text-align: center;margin-top: 50px;">如需要阅读此篇文章请联系管理员！</h1>
+                    <p style="color:blue; text-align: center" class="lead">
+                        <!-- <b></b>-->
+                    </p>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="col-md-12 clear-both" th:if="${readPerm}">
+            <div class="panel panel-default view-left-content">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="padding: 2px;" class="visible-lg visible-md">
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" id="enjoyId" class="btn btn-default  btn-xs" th:attr="cId=${c}" >
+                                        <span class="glyphicon glyphicon-star"></span><span th:if="${c==0}">关注</span>
+                                        <span th:if="${c!=0}">取消关注</span>
+                                    </button>
+
+                                    <div class="btn-group btn-group-xs" role="group" th:if="${editPerm}">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="glyphicon glyphicon-cog"></span>
+                                            &nbsp;编辑知识
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a id="editTopButtonId" th:href="@{'/eKnow/'+${know.id}}" >
+                                                    <span class="glyphicon glyphicon-edit"></span>
+                                                    &nbsp;修改知识
+                                                </a>
+                                            </li>
+                                          <!--  <li>
+                                                <a id="editRelationKnowButtonId">
+                                                    <span class="glyphicon glyphicon-link"></span>
+                                                    &nbsp;设置关联知识
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a id="addRelationFile">
+                                                    <span class=" glyphicon glyphicon-folder-close"></span>
+                                                    &nbsp;新建关联资源
+                                                </a>
+                                            </li>-->
+                                            <li th:if="${know.readPerm!=0}">
+                                                <a id="publickButtonId">
+                                                    <span class="glyphicon glyphicon-plane"></span>
+                                                    &nbsp;公开
+                                                </a>
+                                            </li>
+                                            <li shiro:hasPermission="know:delete">
+                                                <a id="delTopButtonId">
+                                                    <span class="glyphicon glyphicon-envelope"></span>
+                                                    &nbsp;删除
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!--<button type="button" id="downKnowButtonId" class="btn btn-default  btn-xs">
+                                        <span class="glyphicon glyphicon-save"></span>
+                                        &nbsp;下载到本地
+                                    </button>-->
+                                   <!-- <div class="btn-group btn-group-xs" role="group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="glyphicon glyphicon-share"></span>
+                                            &nbsp;分享
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a id="sendButtonId">
+                                                    <span class="glyphicon glyphicon-send"></span>
+                                                    &nbsp;站内推送
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a id="shareButtonId">
+                                                    <span class="glyphicon glyphicon-link"></span>
+                                                    &nbsp;链接分享
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>-->
+                                </div>
+                                <div class="pull-right">
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button"  class="btn btn-info">
+                                            访问量<i style="margin-left: 0.5em;" class="glyphicon glyphicon-hand-up"></i>
+                                            <span >[[${readCount}]]</span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary">
+                                            评论量<i style="margin-left: 0.5em;" class="glyphicon glyphicon-comment"></i>
+                                            <span >[[${commentToal}]]</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button"  id="btnKnowGoodId" class="btn btn-success">
+                                            好评<i style="margin-left: 0.5em;" class="glyphicon glyphicon-thumbs-up"></i>
+                                            <span id="praiseyesNumId">[[${goodCount}]]</span>
+                                        </button>
+                                        <button type="button" id="btnPraiseNoId" class="btn btn-warning">
+                                            差评<i style="margin-left: 0.5em;" class="glyphicon glyphicon-thumbs-down"></i>
+                                            <span id="praisenoNumId">[[${badCount}]]</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="doc_title" th:text="${know.knowTitle}"></div>
+                            <div class="doc-conentinfo">
+                                作者
+                                <span class="authortagsearch" th:title="${know.creater}" th:text="${know.creater}"></span>
+                                于[[${know.createDate}]]
+                                <b>发布在分类</b>/
+                                <a href="#" th:title="${know.knowType}" th:text="${know.knowType}"></a>
+                                <div class="row">
+                                    <div class="col-md-12 text-left" style="margin-top: 8px;margin-bottom: 4px;">
+                                        <span class="label label-default tagsearch" style="cursor: pointer;" th:title="${tag}" th:text="${tag}" th:each="tag:${tags}" th:if="${tag}!=null"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-left: -18px; margin-right: -18px;">
+                        <div class="col-md-12" id="docContentsId">
+                            <hr style="clear: both; margin-bottom: 20px; border-top: dashed 1px #ddd;">
+                            <div class="ke-content currentVersion" th:utext="${know.konwContent}">
+
+                            </div>
+                            <hr style="clear: both; margin-bottom: 20px; border-top: dashed 1px #ddd;">
+                            <img th:src="@{${know.knowImg}}" alt="预览图" class="img-thumbnail center-block doc-contentimg" height="">
+                        </div>
+                    </div>
+                    <div class="row doc_column_box">
+                        <div class="col-sm-12">
+                            <span class="pull-right" style="font-size: 16px; margin-right: 16px;">当前评论数
+                                <span>
+                                    <a href="#" style="color: #377bb5; font-weight: bold;">[[${commentToal}]]</a>条</span>&nbsp;&nbsp;
+                                    <!--<span><a href="#" style="color: #377bb5;font-size: 14px;margin-left: 16px;">查看更多评论</a>
+                                    </span>-->
+                            </span>
+                        </div>
+                    </div>
+                    <a name="markdocMessage"></a>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <hr class="hr_split">
+                            <form role="form" action="/comment"  id="knowCommentSubmitFormId" class="wcp_noEnterSubmit" method="post">
+                                <input type="hidden" id="knowId"  name="knowId" th:value="${know.id}">
+                                <input type="hidden" id="creater"  name="creater" th:value="${session.user.number}">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <textarea class="form-control" id="content" name="content" style="border-color: #377bb5;" placeholder="请输入评论内容"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button type="button" id="commentSubmit" data-loading-text="加载中.." class="btn btn-primary btn-lg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发表评论&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a name="markdocMessage"></a>
+                            <br>
+                            <div class="row doc_column_box" th:if="${comments.size()!=0}">
+                                <div class="col-sm-12">
+                                    <span class="glyphicon glyphicon-comment  column_title">&nbsp;最新评论</span>
+                                </div>
+                            </div>
+                            <div class="row" th:if="${comments.size()!=0}">
+                                <div class="col-md-12" >
+                                    <div class="row" id="commentBoxId">
+                                        <div th:each="comment:${comments}">
+                                            <div class="col-sm-12">
+                                                <hr class="hr_split">
+                                            </div>
+                                            <div class="col-sm-12 doc_node">
+                                                <div class="media message_boxunit">
+                                                    <a class="pull-left" href="#" style="max-width: 200px; text-align: center;" th:title="${session.user.number}">
+                                                        <img class="img-circle side_unit_author_img_min" th:alt="${session.user.number}" th:src="@{/img/knowledge/user1.jpg}">
+                                                        <br>
+                                                    </a>
+                                                    <div class="media-body">
+                                                        <div class="side_unit_info">
+                                                            <div class="side_unit_info">
+                                                                <span class="side_unit_info">
+                                                                    <a href="#" th:text="${comment.creater}"></a>
+                                                                    &nbsp;&nbsp;[[${comment.createDate}]]
+                                                                </span>
+                                                            </div>
+                                                            <div class="doc_node_content" style="margin: 4px;" th:text="${comment.content}">11</div>
+                                                            <div class="side_unit_info">
+                                                                <button  type="button" class="btn btn-default btn-xs" th:onclick="'javascript:approveOf('+${comment.id}+')'" >赞同(<span id="agreeCount">[[${comment.agreeCount}]]</span>)</button>
+                                                                <button  type="button" class="btn btn-default btn-xs" th:onclick="'javascript:opposeOf('+${comment.id}+')'" >反对(<span id="opposeCount">[[${comment.opposeCount}]]</span>)</button>
+                                                                <button  type="button" th:onclick="'replyClick('+${comment.id}+')'"  class="btn btn-info btn-xs">回复</button>
+                                                            </div>
+                                                            <div class="side_unit_info message_reply_box"  th:attr="id='reply_'+${comment.id}"  style="margin-top: 4px; display: none;">
+                                                                <form class="form-inline"  method="post">
+                                                                    <div class="input-group">
+                                                                        <input type="text" name="content" class="form-control" th:attr="id='replyContent_'+${comment.id}" >
+                                                                        <span class="input-group-btn">
+											                                <button type="button" class="btn btn-default" th:onclick="'saveCommentReply('+${comment.id}+')'" >回复</button>
+										                                </span>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div class="side_unit_info">
+                                                            <ul class="list-group" style="margin-top: 8px" th:attr="id='replyContentDiv_'+${comment.id}">
+                                                                <li style="background-color: #ffffee;"   th:if="${comment.hasSon==true}" class="list-group-item" th:each="comment1:${comment.getSonComments()}">
+                                                                    <span class="side_unit_info">
+											                             <a href="#" class="color_a" th:text="${comment1.creater}"> zz</a>
+                                                                       &nbsp;&nbsp;[[${comment1.createDate}]]
+									                                </span>：
+                                                                    <br> <br>[[${comment1.content}]]
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 20px;"></div>
+            <div class="panel panel-default view-left-content">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a name="markdocauth"></a>
+                            <br>
+                            <div class="row doc_column_box">
+                                <div class="col-sm-12">
+                                    <span class="glyphicon glyphicon-user column_title">&nbsp;访问权限</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <hr class="hr_split">
+                                    <table class="table table-bordered table-hover" style="font-size: 12px;">
+                                        <tbody><tr>
+                                            <td class="active" style="width: 100px;">
+                                                <b>创建人</b>
+                                            </td>
+                                            <td>
+                                                <a href="#">[[${session.user.number}]]</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="active">
+                                                <b>文档编辑权限</b>
+                                            </td>
+                                            <td th:switch="${know.editPerm}">
+                                                <span th:case="0">所有人</span>
+                                                <span th:case="1">创建者私有</span>
+                                                <span th:case="2" class="badge" >角色</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="active">
+                                                <b>文档阅读权限</b>
+                                            </td>
+                                            <td th:switch="${know.readPerm}">
+                                                <span th:case="0">所有人</span>
+                                                <span th:case="1">创建者私有</span>
+                                                <span th:case="2" class="badge">角色</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="active">
+                                                <b>分类阅读权限</b>
+                                            </td>
+                                            <td>
+                                                所有人
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="active">
+                                                <b>分类编辑权限</b>
+                                            </td>
+                                            <td>
+                                                所有人
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="active">
+                                                <b>分类审核权限</b>
+                                            </td>
+                                            <td>
+                                                <span class="badge">知识管理员</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <span class="badge">系统管理员</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="active">
+                                                <b>分类预览权限</b>
+                                            </td>
+                                            <td>
+                                                所有人
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="active">
+                                                <b>分类下载权限</b>
+                                            </td>
+                                            <td>
+                                                所有人
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <a name="markdocFile"></a>
+                            <br>
+                            <div class="row doc_column_box" th:if="${know.knowFileIds!=null}">
+                                <div class="col-sm-12">
+                                    <span class="glyphicon glyphicon-paperclip column_title">&nbsp;附件</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <hr class="hr_split">
+                                    <table class="table table-bordered table-hover" style="font-size: 12px;">
+                                        <tbody><tr>
+                                            <td class="active" style="width: 100px;">
+                                                <b>附件类型</b>
+                                            </td>
+                                            <td>
+                                                <p>
+                                                    <img style="max-height: 42px; max-width: 42px;" alt="预览图" th:src="@{${know.knowImg}}">JPG
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${knowFile!=null}">
+                                            <td colspan="2">
+                                                <!-- 需要特殊显示的文件_结束 --> <!-- 详细附件列表_开始 -->
+                                                <p style="text-align: center;">
+                                                    <button type="button" id="ShowAllDocFileId" class="btn btn-primary btn-xs">显示附件列表([[${knowFile.size()}]])</button>
+                                                </p>
+                                                <div id="docFilesListPId" style="display: none;">
+                                                    <p th:each="file:${knowFile}" th:value="${file}">
+                                                        <a th:href="@{'/upload/knowledge/'+${file}}" >
+                                                            <span class="glyphicon glyphicon-paperclip"></span>
+                                                            [[${file.split('knowFile')[1]}]]
+                                                        </a>
+                                                    </p>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="foot">
+    知识管理系统-V1.0.0
+</div>
+
+<script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}" ></script>
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<script th:inline="javascript">
+$(function () {
+    $("[name='content']").val("");
+    toastr.options = {
+        closeButton: true,                                            // 是否显示关闭按钮，（提示框右上角关闭按钮）
+        debug: false,                                                    // 是否使用deBug模式
+        progressBar: true,                                            // 是否显示进度条，（设置关闭的超时时间进度条）
+        positionClass: "toast-top-right",              // 设置提示款显示的位置
+        onclick: null,                                                     // 点击消息框自定义事件
+        showDuration: "300",                                      // 显示动画的时间
+        hideDuration: "1000",                                     //  消失的动画时间
+        timeOut: "1000",                                             //  自动关闭超时时间
+        extendedTimeOut: "1000",                             //  加长展示时间
+        showEasing: "swing",                                     //  显示时的动画缓冲方式
+        hideEasing: "linear",                                       //   消失时的动画缓冲方式
+        showMethod: "fadeIn",                                   //   显示时的动画方式
+        hideMethod: "fadeOut"                                   //   消失时的动画方式
+    };
+    $("#enjoyId").on("click",function () {
+        if($.trim($("#enjoyId").text()=="关注")){
+            $.ajax({
+                type:"post",
+                url:"/collect",
+                data:{number:[[${session.user.number}]],knowId:$("#knowId").val()},
+                dataType:"json",
+                success:function (data) {
+                    $("#enjoyId").attr("cId",data);
+                    $("#enjoyId").html("<span class='glyphicon glyphicon-star'></span>取消关注");
+                }
+            })
+        }
+        if($.trim($("#enjoyId").text()=="取消关注")){
+            $.ajax({
+                type:"post",
+                url:"/collect/"+$("#enjoyId").attr("cId"),
+                data:{_method:"delete"},
+                dataType:"json",
+                success:function (data) {
+                    $("#enjoyId").removeAttr("cId");
+                    $("#enjoyId").html("<span class='glyphicon glyphicon-star'></span>关注");
+                }
+            })
+        }
+    })
+
+    //提交评论
+    $("#commentSubmit").on("click",function () {
+        var content = $("#content").val();
+        if($.trim(content)==""){
+            return ;
+        }
+        $("#commentSubmit").button("loading");
+        $("#knowCommentSubmitFormId").submit();
+    })
+    
+    //好评
+    $("#btnKnowGoodId").on("click",function () {
+        $.ajax({
+            type:"post",
+            url:"/knowGoodCount",
+            data:{knowId:$("#knowId").val(),creater:[[${session.user.number}]]},
+            dataType:"json",
+            success:function (data) {
+                if(data==0){
+                    var v = $("#praiseyesNumId").text();
+                    v=parseInt(v)+1;
+                    $("#praiseyesNumId").text(v);
+                }
+            }
+        })
+    })
+
+    //差评
+    $("#btnPraiseNoId").on("click",function () {
+        $.ajax({
+            type:"post",
+            url:"/knowBadCount",
+            data:{knowId:$("#knowId").val(),creater:[[${session.user.number}]]},
+            dataType:"json",
+            success:function (data) {
+                if(data==0){
+                    var v = $("#praisenoNumId").text();
+                    v=parseInt(v)+1;
+                    $("#praisenoNumId").text(v);
+                }
+            }
+        })
+    })
+
+    //公开此类知识
+    $("#publickButtonId").on("click",function () {
+        $.ajax({
+            type:"post",
+            url:"/updateKnowReadPerm/"+[[${know.id}]],
+            data:{_method:"put"},
+            dataType:"json",
+            success:function (d) {
+                
+            }
+        })
+    })
+
+    //删除知识
+    $("#delTopButtonId").on("click",function () {
+        $.ajax({
+            type:"post",
+            url:"/know/"+[[${know.id}]],
+            data:{_method:"delete"},
+            dataType:"json",
+            success:function (d) {
+
+            }
+        })
+    })
+
+    $('#ShowAllDocFileId').bind('click',
+        function() {
+            $('#docFilesListPId').show();
+            $('#ShowAllDocFileId').hide();
+        });
+
+
+})
+function replyClick(id) {
+    $("#reply_"+id).toggle();
+}
+
+function saveCommentReply(id) {
+    var content = $("#replyContent_"+id).val();
+    if($.trim(content)==""){
+        return;
+    }
+    $.ajax({
+        type:"post",
+        url:"/replyComment",
+        data:{content:content,replyId:id,knowId:$("#knowId").val(),creater:[[${session.user.number}]]},
+        dataType:"json",
+        success:function (data) {
+            $("[name='content']").val("");
+            $("#reply_"+id).toggle();
+            $("#replyContentDiv_"+id).prepend("<li style='background-color: #ffffee;' class='list-group-item'><span class='side_unit_info'><a class='color_a' href='#'>"+[[${session.user.number}]]+"&nbsp;&nbsp;</a>"+getCurrentTime()+"</span>:<br><br>"+content+"</li>");
+        }
+    })
+}
+
+function getCurrentTime(){
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = (date.getMonth()+1)<10?"0"+(date.getMonth()+1):(date.getMonth()+1);
+    var day = date.getDate()<10?"0"+date.getDate():date.getDate();
+    var hour = date.getHours()<10?"0"+date.getHours():date.getHours();
+    var minutes = date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes();
+    var seconds = date.getSeconds()<10?"0"+date.getSeconds():date.getSeconds();
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + day
+        + " " +hour + seperator2 + minutes+ seperator2 + seconds;
+    return currentdate;
+}
+
+function approveOf(id){
+    $.ajax({
+        type:"post",
+        url:"/addCommentAgreeCount",
+        data:{creater:[[${session.user.number}]],id:id},
+        dataType:"json",
+        success:function (data) {
+            if(data==1){
+                return;
+            }else if(data==0){
+                var v = $("#agreeCount").text();
+                v=parseInt(v)+1;
+                $("#agreeCount").text(v);
+            }
+        }
+    })
+}
+
+function opposeOf(id) {
+    $.ajax({
+        type:"post",
+        url:"/addOpposeAgreeCount",
+        data:{creater:[[${session.user.number}]],id:id},
+        dataType:"json",
+        success:function (data) {
+            if(data==1){
+                return;
+            }else if(data==0){
+                var v = $("#opposeCount").text();
+                v=parseInt(v)+1;
+                $("#opposeCount").text(v);
+            }
+        }
+    })
+}
+
+
+
+</script>
+</body>
+</html>

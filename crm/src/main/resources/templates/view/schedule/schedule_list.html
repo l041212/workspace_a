@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta charset="UTF-8">
+	    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+	    <link th:href="@{/css/ace/ace.min.css}" rel="stylesheet">
+	    <link rel="stylesheet" th:href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}">
+	    <link rel="stylesheet" th:href="@{/plugins/bootstrapTable/css/bootstrap-table.min.css}">
+	    <link rel="stylesheet" th:href="@{/css/schedule/schedule_list.css}">
+	    <script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+		<script th:src="@{/js/bootstrap.min.js}"></script>
+		<script th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js}"></script>
+		<script th:src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js}"></script>
+		<script th:src="@{/js/bootbox.js}"></script>
+		<script th:src="@{/js/schedule/schedule_list.js}"></script>
+	</head>
+	<body class="no-skin">
+		<div class="schedule-container">
+			<div class="schedule-title">
+				<input id="datetimepicker" size="16" type="text">
+			</div>
+			<div class="schedule-menu">
+				<button id="save" type="button" class="btn btn-white btn-default">保存</button>
+				<button id="sort" type="button" class="btn btn-white btn-default">排序</button>
+				<button id="export" type="button" class="btn btn-white btn-default">导出</button>		
+			</div>
+		</div>
+		<div class="schedule-table">
+			<div id="shiftDetail"></div>
+			<div id="sch-tbl">
+				<div id="sch-menu">
+					<div id="menu-title"></div>
+					<div id="menu-zone"></div>
+				</div>
+				<div id="sch-ctx">
+					<div id="ctx-title"></div>
+					<div id="ctx-zone"></div>
+				</div>
+			</div>
+		</div>
+		<div class="schedule-table-mirror">
+			<div id="staffDetail"></div>
+			<div id="sch-tbl-mirror">
+				<div id="sch-menu-mirror">
+					<div id="menu-title-mirror"></div>
+					<div id="menu-zone-mirror"></div>
+				</div>
+				<div id="sch-ctx-mirror">
+					<div id="ctx-title-mirror"></div>
+					<div id="ctx-zone-mirror"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

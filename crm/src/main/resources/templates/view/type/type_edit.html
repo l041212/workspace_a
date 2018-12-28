@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}">
+</head>
+<body class="no-skin">
+<div class="main-container" id="main-container">
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" role="form" th:action="@{/type}" id="typeForm" method="post">
+                            <div id="zhongxin" style="padding-top:13px;">
+                                <input type="hidden" name="parentName" th:value="13" th:if="${parentType!=null&&parentType.parentName=='13'}">
+                                <input type="hidden" name="parentId"  th:value="${parentId==null?'0':parentId}">
+                                <input type="hidden" name="_method" value="put" th:if="${type!=null}">
+                                <input type="hidden" name="id" id="typeId"  th:if="${type!=null}" th:value="${type!=null}?${type.id}">
+                                <input type="hidden" id="value" name="value">
+                                <table id="table_report" class="table table-striped table-bordered table-hover" style="margin-top:15px;">
+                                    <tr>
+                                        <td style="width:79px;text-align: right;padding-top: 13px;">上级:</td>
+                                        <td>
+                                            <div class="col-xs-6 label label-lg label-light arrowed-in arrowed-right">
+                                                <b th:text="${parentType== null}?'(无) 此项为顶级选项':${parentType.text}"></b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:70px;text-align: right;padding-top: 13px;">名称:</td>
+                                        <td>
+                                            <input  class="form-control" placeholder="这里输入选项名称"
+                                                   maxlength="50" type="text" id="text" name="text"
+                                                   th:value="${type!=null}?${type.text}" style="width:98%">
+                                        </td>
+                                    </tr>
+                                    <tr  th:if="${parentType!=null&&parentType.parentName=='13'}">
+                                        <td style="width:70px;text-align: right;padding-top: 13px;">标签:</td>
+                                        <td>
+                                            <input class="form-control" placeholder="输入类别标签,多个标签之间用/分隔"
+                                                   maxlength="50" type="text" id="title" name="title"
+                                                   th:value="${type!=null}?${type.title}" style="width:98%">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:70px;text-align: right;padding-top: 13px;">状态:</td>
+                                        <td>
+                                            <select name="status" id="status" style="width:98%">
+                                                <option th:value="0" th:selected="${type!=null}?${type.status==0}">正常</option>
+                                                <option th:value="1" th:selected="${type!=null}?${type.status==1}">禁用</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                   <!--<tr>
+                                        <td style="width:70px;text-align: right;padding-top: 13px;">父选项:</td>
+                                        <td>
+                                           <select name="parentId" id="parentId" style="width:98%">
+                                                <option value="0">无</option>
+                                                <option th:if="${parentType!=null}" th:each="tpyea:${types}"
+                                                        th:text="${tpyea.text}" th:value="${tpyea.value}"
+                                                        th:selected="${parentType!=null}?${parentType.text==tpyea.text}"></option>
+                                           </select>
+                                        </td>
+                                    </tr>-->
+                                    <tr>
+                                        <td class="center" colspan="10">
+                                            <a shiro:hasPermission="type:update" class="btn btn-mini btn-primary" onclick="save();">保存</a>
+                                            <a class="btn btn-mini btn-danger" onclick="top.Dialog.close();">取消</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </form>
+                        <div id="zhongxin2" class="center" style="display:none">
+                            <img th:src="@{/img/jzx.gif}" style="width: 50px;"><br/>
+                            <h4 class="lighter block green"></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/plugins/tips/jquery.tips.js}"></script>
+<script th:inline="javascript">
+    top.hideMask();
+    var parentId = [[${parentId}]];
+    var text = '';
+    var type = [[${type}]];
+    if(type!=null || type!=undefined){
+        text = type.text;
+    }
+
+    function save() {
+        if($("#text").val()==""){
+            $("#text").tips({
+                side:3,
+                msg:'请输入',
+                bg:'#AE81FF',
+                time:2
+            });
+            $("#text").focus();
+            return false;
+        }
+
+        $.ajax({
+            type:"get",
+            url:"/findTypeExist",
+            data:{"text":$("#text").val(),"parentId":parentId},
+            dataType:"json",
+            success:function(data){
+                /*判断是增加还是修改*/
+                if($("#typeId").length>0){//修改
+                    if(text!=$("#text").val()){
+                        if(data!=0){
+                            $("#text").tips({
+                                side:3,
+                                msg:'该选项已经存在',
+                                bg:'#AE81FF',
+                                time:2
+                            });
+                            $("#text").focus();
+                            return false;
+                        }
+                    }
+                }else{
+                    if(data!=0){
+                        $("#text").tips({
+                            side:3,
+                            msg:'该选项已经存在',
+                            bg:'#AE81FF',
+                            time:2
+                        });
+                        $("#text").focus();
+                        return false;
+                    }
+                }
+                $("#value").val($("#text").val());
+                $("#typeForm").submit();
+                $("#zhongxin").hide();
+                $("#zhongxin2").show();
+            }
+        })
+    }
+</script>
+</body >
+</html>

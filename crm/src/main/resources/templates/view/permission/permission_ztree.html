@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{plugins/bootstrapZtree/css/bootstrapStyle.css}" />
+    <script th:src="@{plugins/bootstrapZtree/js/jquery.min.js}"></script>
+    <script th:src="@{plugins/bootstrapZtree/js/jquery.ztree.core.js}"></script>
+    <script th:src="@{plugins/bootstrapZtree/js/jquery.ztree.excheck.js}"></script>
+    <script th:src="@{plugins/bootstrapZtree/js/jquery.ztree.exedit.js}"></script>
+    <link rel="stylesheet" th:href="@{css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{css/smartadmin-production.min.css}" >
+    <link rel="stylesheet" type="text/css" th:href="@{css/smartadmin-production-plugins.min.css}" >
+    <script th:src="@{js/jarvis.widget.min.js}"></script>
+</head>
+<body>
+<div id="content">
+    <section id="widget-grid">
+       <div class="row">
+           <article class="col-xs-3">
+               <div class="jarviswidget " data-widget-colorbutton="false" id="wid-id-3" data-widget-editbutton="false" data-widget-togglebutton="true" data-widget-deletebutton="false">
+                   <header>
+                       <h2><strong>目录</strong> </h2>
+                   </header>
+                   <div>
+                       <div class="widget-body">
+                           <ul id="leftTree" class="ztree"></ul>
+                       </div>
+                   </div>
+               </div>
+           </article>
+           <article class="col-xs-9">
+               <div class="jarviswidget " data-widget-colorbutton="false" id="wid-id-4" data-widget-editbutton="false" data-widget-togglebutton="true" data-widget-deletebutton="false">
+                   <header>
+                       <h2><strong>列表</strong></h2>
+                   </header>
+                   <div>
+                       <div class="widget-body">
+                           <iframe name="treeFrame" id="treeFrame" frameborder="0" src="/perm/0" style="margin:0 auto;width:100%;height:100%;"></iframe>
+                       </div>
+                   </div>
+               </div>
+           </article>
+       </div>
+    </section>
+</div>
+
+
+<script th:inline="javascript" type="text/javascript">
+    var zNodes = [[${perms}]];
+    zNodes = eval(zNodes);
+    console.log(zNodes);
+    var setting = {
+        view: {
+            selectedMulti: false
+        },
+        check: {
+            enable: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        edit: {
+            enable: false
+        }
+    };
+    $(document).ready(function(){
+        $.fn.zTree.init($("#leftTree"), setting, zNodes);
+    });
+
+    function treeFrameT(){
+        var hmainT = document.getElementById("treeFrame");
+        var bheightT = document.documentElement.clientHeight;
+        hmainT .style.width = '100%';
+        hmainT .style.height = (bheightT-26) + 'px';
+    }
+    treeFrameT();
+    window.onresize=function(){
+        treeFrameT();
+    };
+
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zh.crm.mapper.RecordMapper">
+  <resultMap id="BaseResultMap" type="com.zh.crm.entity.Record">
+    <id column="ID" jdbcType="INTEGER" property="ID" />
+    <result column="ucid" jdbcType="VARCHAR" property="ucid" />
+    <result column="callid" jdbcType="VARCHAR" property="callid" />
+    <result column="calling_no" jdbcType="VARCHAR" property="calling_no" />
+    <result column="called_no" jdbcType="VARCHAR" property="called_no" />
+    <result column="ext_no" jdbcType="VARCHAR" property="ext_no" />
+    <result column="agent_no" jdbcType="VARCHAR" property="agent_no" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="start_time" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="end_time" />
+    <result column="file_name" jdbcType="VARCHAR" property="file_name" />
+    <result column="direction" jdbcType="INTEGER" property="direction" />
+    <result column="nucid" jdbcType="VARCHAR" property="nucid" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="span" jdbcType="BIGINT" property="span" />
+    <result column="skill_no" jdbcType="VARCHAR" property="skill_no" />
+    <result column="vdn" jdbcType="VARCHAR" property="vdn" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, ucid, callid, calling_no, called_no, ext_no, agent_no, start_time, end_time, 
+    file_name, direction, nucid, type, span, skill_no, vdn
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_recording_track
+    where ID = #{ID,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_recording_track
+    where ID = #{ID,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zh.crm.entity.Record">
+    <selectKey keyProperty="ID" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_recording_track (ucid, callid, calling_no,
+      called_no, ext_no, agent_no,
+      start_time, end_time, file_name,
+      direction, nucid, type,
+      span, skill_no, vdn)
+    values (#{ucid,jdbcType=VARCHAR}, #{callid,jdbcType=VARCHAR}, #{calling_no,jdbcType=VARCHAR},
+      #{called_no,jdbcType=VARCHAR}, #{ext_no,jdbcType=VARCHAR}, #{agent_no,jdbcType=VARCHAR},
+      #{start_time,jdbcType=TIMESTAMP}, #{end_time,jdbcType=TIMESTAMP}, #{file_name,jdbcType=VARCHAR},
+      #{direction,jdbcType=INTEGER}, #{nucid,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+      #{span,jdbcType=BIGINT}, #{skill_no,jdbcType=VARCHAR}, #{vdn,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zh.crm.entity.Record">
+    <selectKey keyProperty="ID" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_recording_track
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ucid != null">
+        ucid,
+      </if>
+      <if test="callid != null">
+        callid,
+      </if>
+      <if test="calling_no != null">
+        calling_no,
+      </if>
+      <if test="called_no != null">
+        called_no,
+      </if>
+      <if test="ext_no != null">
+        ext_no,
+      </if>
+      <if test="agent_no != null">
+        agent_no,
+      </if>
+      <if test="start_time != null">
+        start_time,
+      </if>
+      <if test="end_time != null">
+        end_time,
+      </if>
+      <if test="file_name != null">
+        file_name,
+      </if>
+      <if test="direction != null">
+        direction,
+      </if>
+      <if test="nucid != null">
+        nucid,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="span != null">
+        span,
+      </if>
+      <if test="skill_no != null">
+        skill_no,
+      </if>
+      <if test="vdn != null">
+        vdn,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ucid != null">
+        #{ucid,jdbcType=VARCHAR},
+      </if>
+      <if test="callid != null">
+        #{callid,jdbcType=VARCHAR},
+      </if>
+      <if test="calling_no != null">
+        #{calling_no,jdbcType=VARCHAR},
+      </if>
+      <if test="called_no != null">
+        #{called_no,jdbcType=VARCHAR},
+      </if>
+      <if test="ext_no != null">
+        #{ext_no,jdbcType=VARCHAR},
+      </if>
+      <if test="agent_no != null">
+        #{agent_no,jdbcType=VARCHAR},
+      </if>
+      <if test="start_time != null">
+        #{start_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="end_time != null">
+        #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="file_name != null">
+        #{file_name,jdbcType=VARCHAR},
+      </if>
+      <if test="direction != null">
+        #{direction,jdbcType=INTEGER},
+      </if>
+      <if test="nucid != null">
+        #{nucid,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="span != null">
+        #{span,jdbcType=BIGINT},
+      </if>
+      <if test="skill_no != null">
+        #{skill_no,jdbcType=VARCHAR},
+      </if>
+      <if test="vdn != null">
+        #{vdn,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zh.crm.entity.Record">
+    update t_recording_track
+    <set>
+      <if test="ucid != null">
+        ucid = #{ucid,jdbcType=VARCHAR},
+      </if>
+      <if test="callid != null">
+        callid = #{callid,jdbcType=VARCHAR},
+      </if>
+      <if test="calling_no != null">
+        calling_no = #{calling_no,jdbcType=VARCHAR},
+      </if>
+      <if test="called_no != null">
+        called_no = #{called_no,jdbcType=VARCHAR},
+      </if>
+      <if test="ext_no != null">
+        ext_no = #{ext_no,jdbcType=VARCHAR},
+      </if>
+      <if test="agent_no != null">
+        agent_no = #{agent_no,jdbcType=VARCHAR},
+      </if>
+      <if test="start_time != null">
+        start_time = #{start_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="end_time != null">
+        end_time = #{end_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="file_name != null">
+        file_name = #{file_name,jdbcType=VARCHAR},
+      </if>
+      <if test="direction != null">
+        direction = #{direction,jdbcType=INTEGER},
+      </if>
+      <if test="nucid != null">
+        nucid = #{nucid,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="span != null">
+        span = #{span,jdbcType=BIGINT},
+      </if>
+      <if test="skill_no != null">
+        skill_no = #{skill_no,jdbcType=VARCHAR},
+      </if>
+      <if test="vdn != null">
+        vdn = #{vdn,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{ID,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zh.crm.entity.Record">
+    update t_recording_track
+    set ucid = #{ucid,jdbcType=VARCHAR},
+      callid = #{callid,jdbcType=VARCHAR},
+      calling_no = #{calling_no,jdbcType=VARCHAR},
+      called_no = #{called_no,jdbcType=VARCHAR},
+      ext_no = #{ext_no,jdbcType=VARCHAR},
+      agent_no = #{agent_no,jdbcType=VARCHAR},
+      start_time = #{start_time,jdbcType=TIMESTAMP},
+      end_time = #{end_time,jdbcType=TIMESTAMP},
+      file_name = #{file_name,jdbcType=VARCHAR},
+      direction = #{direction,jdbcType=INTEGER},
+      nucid = #{nucid,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      span = #{span,jdbcType=BIGINT},
+      skill_no = #{skill_no,jdbcType=VARCHAR},
+      vdn = #{vdn,jdbcType=VARCHAR}
+    where ID = #{ID,jdbcType=INTEGER}
+  </update>
+
+  <!--查询所有的录音记录-->
+  <select id="findAllRecord" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List" />
+    from t_recording_track
+    where 1=1
+    <if test="keywords != null and keywords != ''">
+      and(
+      calling_no like  CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      called_no like  CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      ext_no like  CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      agent_no like  CONCAT(CONCAT('%', #{keywords}),'%')
+      )
+    </if>
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+  
+  <select id="findRecordSelective" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_recording_track
+		<where>
+			<if test="keywords != null and keywords != ''">
+		      and (
+			      calling_no like  CONCAT(CONCAT('%', #{keywords}),'%')
+			      or
+			      called_no like  CONCAT(CONCAT('%', #{keywords}),'%')
+			      or
+			      ext_no like  CONCAT(CONCAT('%', #{keywords}),'%')
+			      or
+			      agent_no like  CONCAT(CONCAT('%', #{keywords}),'%')
+		      )
+		    </if>
+		    <if test="reStartDate != null and reStartDate != ''">
+		    	and date_format(start_time, '%Y-%m-%d') &gt;= #{reStartDate}
+		    </if>
+		    <if test="reEndDate != null and reEndDate != ''">
+		    	and date_format(end_time, '%Y-%m-%d') &lt;= #{reEndDate}
+		    </if>
+		    <if test="reStartHour != null and reStartHour != ''">
+		    	and time_format(start_time, '%h') &gt;= #{reStartHour}
+		    </if>
+		    <if test="reEndHour != null and reEndHour != ''">
+		    	and time_format(end_time, '%H') &lt;= #{reEndHour}
+		    </if>
+		    <if test="symbol != null and symbol != '' and period != null and period != ''">
+		    	<choose>
+		    		<when test="symbol == 'gte'">
+		    			and unix_timestamp(end_time)-unix_timestamp(start_time) &gt;= #{period}
+		    		</when>
+		    		<when test="symbol == 'lte'">
+		    			and unix_timestamp(end_time)-unix_timestamp(start_time) &lt;= #{period}
+		    		</when>
+		    	</choose>
+		    </if>
+		    <if test="direction != null and direction != ''">
+		    	direction = convert(#{direction}, signed)
+		    </if>
+		</where>
+	</select>
+  
+</mapper>

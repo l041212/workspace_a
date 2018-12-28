@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zh.crm.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.zh.crm.entity.User">
+    <id column="userId" jdbcType="INTEGER" property="userId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="skin" jdbcType="VARCHAR" property="skin" />
+    <result column="lastLogin" jdbcType="VARCHAR" property="lastLogin" />
+    <result column="number" jdbcType="VARCHAR" property="number" />
+    <result column="depId" jdbcType="INTEGER" property="depId" />
+    <result column="roleIds" jdbcType="VARCHAR" property="roleIds" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="job" jdbcType="VARCHAR" property="job" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="maritalStatus" jdbcType="INTEGER" property="maritalStatus" />
+    <result column="nation" jdbcType="VARCHAR" property="nation" />
+    <result column="IDNumber" jdbcType="VARCHAR" property="IDNumber" />
+    <result column="education" jdbcType="VARCHAR" property="education" />
+    <result column="health" jdbcType="VARCHAR" property="health" />
+    <result column="skill" jdbcType="VARCHAR" property="skill" />
+    <result column="bornDay" jdbcType="VARCHAR" property="bornDay" />
+    <result column="intoCompanyDate" jdbcType="VARCHAR" property="intoCompanyDate" />
+    <result column="bloodType" jdbcType="VARCHAR" property="bloodType" />
+    <result column="postalCode" jdbcType="VARCHAR" property="postalCode" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="rent" jdbcType="INTEGER" property="rent" />
+    <result column="floor" jdbcType="VARCHAR" property="floor" />
+    <result column="userType" jdbcType="INTEGER" property="userType" />
+    <result column="userImg" jdbcType="VARCHAR" property="userImg" />
+  </resultMap>
+
+  <resultMap id="allUserMap" type="com.zh.crm.entity.User" extends="BaseResultMap">
+    <association property="dep"  javaType="com.zh.crm.entity.Deparment">
+      <id property="depId" column="depId"  jdbcType="INTEGER"></id>
+      <result property="depName" column="depName" jdbcType="VARCHAR"></result>
+      <result property="depCode" column="depCode" jdbcType="VARCHAR"></result>
+      <result property="parentId" column="parentId" jdbcType="INTEGER"></result>
+      <result property="remark" column="remark" jdbcType="VARCHAR"></result>
+    </association>
+    <collection  property="roles" ofType="com.zh.crm.entity.Role" >
+      <id property="roleId" column="roleId" jdbcType="INTEGER"></id>
+      <result property="roleName" column="roleName" jdbcType="VARCHAR"></result>
+      <result property="description" column="description" jdbcType="VARCHAR"></result>
+      <result property="parentId" column="sr_parentId" jdbcType="INTEGER"></result>
+    </collection >
+  </resultMap>
+  <sql id="Base_Column_List">
+    userId, username, password, name, email, phone, telephone, remark, status, skin, 
+    lastLogin, number, depId, roleIds, address, job, sex, maritalStatus, nation, IDNumber, 
+    education, health, skill, bornDay, intoCompanyDate, bloodType, postalCode, location, 
+    rent, floor, userType,userImg
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where userId = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_user
+    where userId = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zh.crm.entity.User">
+    <selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_user (username, password, name,
+    email, phone, telephone,
+    remark, status, skin,
+    lastLogin, number, depId,
+    roleIds, address, job,
+    sex, maritalStatus, nation,
+    IDNumber, education, health,
+    skill, bornDay, intoCompanyDate,
+    bloodType, postalCode, location,
+    rent, floor, userType,userImg
+    )
+    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+    #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR},
+    #{remark,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{skin,jdbcType=VARCHAR},
+    #{lastLogin,jdbcType=VARCHAR}, #{number,jdbcType=VARCHAR}, #{depId,jdbcType=INTEGER},
+    #{roleIds,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{job,jdbcType=VARCHAR},
+    #{sex,jdbcType=INTEGER}, #{maritalStatus,jdbcType=INTEGER}, #{nation,jdbcType=VARCHAR},
+    #{IDNumber,jdbcType=VARCHAR}, #{education,jdbcType=VARCHAR}, #{health,jdbcType=VARCHAR},
+    #{skill,jdbcType=VARCHAR}, #{bornDay,jdbcType=VARCHAR}, #{intoCompanyDate,jdbcType=VARCHAR},
+    #{bloodType,jdbcType=VARCHAR}, #{postalCode,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR},
+    #{rent,jdbcType=INTEGER}, #{floor,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, #{userImg,jdbcType=VARCHAR}
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zh.crm.entity.User">
+    <selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="skin != null">
+        skin,
+      </if>
+      <if test="lastLogin != null">
+        lastLogin,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="depId != null">
+        depId,
+      </if>
+      <if test="roleIds != null">
+        roleIds,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="job != null">
+        job,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="maritalStatus != null">
+        maritalStatus,
+      </if>
+      <if test="nation != null">
+        nation,
+      </if>
+      <if test="IDNumber != null">
+        IDNumber,
+      </if>
+      <if test="education != null">
+        education,
+      </if>
+      <if test="health != null">
+        health,
+      </if>
+      <if test="skill != null">
+        skill,
+      </if>
+      <if test="bornDay != null">
+        bornDay,
+      </if>
+      <if test="intoCompanyDate != null">
+        intoCompanyDate,
+      </if>
+      <if test="bloodType != null">
+        bloodType,
+      </if>
+      <if test="postalCode != null">
+        postalCode,
+      </if>
+      <if test="location != null">
+        location,
+      </if>
+      <if test="rent != null">
+        rent,
+      </if>
+      <if test="floor != null">
+        floor,
+      </if>
+      <if test="userType != null">
+        userType,
+      </if>
+      <if test="userImg != null">
+        userImg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="skin != null">
+        #{skin,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLogin != null">
+        #{lastLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="depId != null">
+        #{depId,jdbcType=INTEGER},
+      </if>
+      <if test="roleIds != null">
+        #{roleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null">
+        #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="maritalStatus != null">
+        #{maritalStatus,jdbcType=INTEGER},
+      </if>
+      <if test="nation != null">
+        #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="IDNumber != null">
+        #{IDNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null">
+        #{education,jdbcType=VARCHAR},
+      </if>
+      <if test="health != null">
+        #{health,jdbcType=VARCHAR},
+      </if>
+      <if test="skill != null">
+        #{skill,jdbcType=VARCHAR},
+      </if>
+      <if test="bornDay != null">
+        #{bornDay,jdbcType=VARCHAR},
+      </if>
+      <if test="intoCompanyDate != null">
+        #{intoCompanyDate,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodType != null">
+        #{bloodType,jdbcType=VARCHAR},
+      </if>
+      <if test="postalCode != null">
+        #{postalCode,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="rent != null">
+        #{rent,jdbcType=INTEGER},
+      </if>
+      <if test="floor != null">
+        #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null">
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="userImg != null">
+        #{userImg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zh.crm.entity.User">
+    update sys_user
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="skin != null">
+        skin = #{skin,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLogin != null">
+        lastLogin = #{lastLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="depId != null">
+        depId = #{depId,jdbcType=INTEGER},
+      </if>
+      <if test="roleIds != null">
+        roleIds = #{roleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null">
+        job = #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="maritalStatus != null">
+        maritalStatus = #{maritalStatus,jdbcType=INTEGER},
+      </if>
+      <if test="nation != null">
+        nation = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="IDNumber != null">
+        IDNumber = #{IDNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null">
+        education = #{education,jdbcType=VARCHAR},
+      </if>
+      <if test="health != null">
+        health = #{health,jdbcType=VARCHAR},
+      </if>
+      <if test="skill != null">
+        skill = #{skill,jdbcType=VARCHAR},
+      </if>
+      <if test="bornDay != null">
+        bornDay = #{bornDay,jdbcType=VARCHAR},
+      </if>
+      <if test="intoCompanyDate != null">
+        intoCompanyDate = #{intoCompanyDate,jdbcType=VARCHAR},
+      </if>
+      <if test="bloodType != null">
+        bloodType = #{bloodType,jdbcType=VARCHAR},
+      </if>
+      <if test="postalCode != null">
+        postalCode = #{postalCode,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="rent != null">
+        rent = #{rent,jdbcType=INTEGER},
+      </if>
+      <if test="floor != null">
+        floor = #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null">
+        userType = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="userImg != null">
+        userImg = #{userImg,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where userId = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zh.crm.entity.User">
+    update sys_user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      skin = #{skin,jdbcType=VARCHAR},
+      lastLogin = #{lastLogin,jdbcType=VARCHAR},
+      number = #{number,jdbcType=VARCHAR},
+      depId = #{depId,jdbcType=INTEGER},
+      roleIds = #{roleIds,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      job = #{job,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      maritalStatus = #{maritalStatus,jdbcType=INTEGER},
+      nation = #{nation,jdbcType=VARCHAR},
+      IDNumber = #{IDNumber,jdbcType=VARCHAR},
+      education = #{education,jdbcType=VARCHAR},
+      health = #{health,jdbcType=VARCHAR},
+      skill = #{skill,jdbcType=VARCHAR},
+      bornDay = #{bornDay,jdbcType=VARCHAR},
+      intoCompanyDate = #{intoCompanyDate,jdbcType=VARCHAR},
+      bloodType = #{bloodType,jdbcType=VARCHAR},
+      postalCode = #{postalCode,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
+      rent = #{rent,jdbcType=INTEGER},
+      floor = #{floor,jdbcType=VARCHAR},
+      userType = #{userType,jdbcType=INTEGER},
+      userImg = #{userImg,jdbcType=VARCHAR}
+    where userId = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <!--通过用户名密码获取user-->
+  <select id="findUserByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where number = #{number,jdbcType=VARCHAR} and  password = #{password,jdbcType=VARCHAR}
+  </select>
+
+  <!--判断用户名是否存在-->
+  <select id="findUserExist" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(userId) from sys_user
+    where username = #{username,jdbcType=VARCHAR}
+  </select>
+
+  <!--判断工号是否存在-->
+  <select id="findUserNumberExist" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select count(userId) from sys_user
+    where number = #{number,jdbcType=VARCHAR}
+  </select>
+
+  <!--查询所有用户-->
+  <select id="findAllUsers" resultMap="allUserMap" parameterType="java.util.Map">
+    select
+    su.userId,su.userImg,su.username,su.name,su.email,su.phone,su.telephone,su.remark,su.status,su.lastLogin,su.number,
+    sd.depName,sd.depId,sd.depCode,sd.parentId,sd.remark
+    from sys_user su
+    left join sys_user_dep sud on su.userId = sud.userId
+    left join sys_deparment sd on sud.depId = sd.depId
+    where 1 =1
+    <if test="keywords != null and keywords != ''">
+      and(
+      su.username like  CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      su.number like  CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      su.name like  CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      su.email like CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      su.phone like CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      su.telephone like CONCAT(CONCAT('%', #{keywords}),'%')
+      or
+      sr.roleName like CONCAT(CONCAT('%', #{keywords}),'%')
+      )
+    </if>
+    <if test="sort != null and sort != ''">
+      order by ${sort}
+    </if>
+    <if test="order != null and order != ''">
+      ${order}
+    </if>
+  </select>
+
+  <select id="findUserInfoById" parameterType="java.lang.Integer" resultMap="allUserMap">
+     select
+    su.userId,su.userImg,su.username,su.name,su.email,su.phone,su.telephone,su.remark,su.status,su.lastLogin,su.number,
+    sd.depName,sd.depId,sd.depCode,sd.parentId,sd.remark,
+    sr.roleId,sr.roleName,sr.description,sr.parentId sr_parentId
+    from sys_user su
+    left join sys_user_dep sud on su.userId = sud.userId
+    left join sys_deparment sd on sud.depId = sd.depId
+    left join sys_user_role sur on su.userId = sur.userId
+    left join sys_role sr on sur.roleId = sr.roleId
+    where su.userId =  #{userId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteUserRole" parameterType="java.lang.Integer">
+     delete from sys_user_role
+    where userId = #{userId,jdbcType=INTEGER}
+  </delete>
+
+  <!--用户批量添加角色-->
+  <insert id="insertUserRolesBatch" parameterType="java.util.Map">
+    insert into  sys_user_role
+    (userId,roleId) values
+    <foreach collection="userRole" item="item" index="index"  separator=",">
+      (#{userId},#{item})
+    </foreach>
+  </insert>
+
+  <!--用户新增部门-->
+  <insert id="insertUserDep" parameterType="java.lang.Integer">
+     insert into  sys_user_dep
+     (userId,depId) values
+     (#{userId},#{depId})
+  </insert>
+
+  <delete id="deleteUserDep" parameterType="java.lang.Integer">
+    delete from sys_user_dep
+    where userId = #{userId,jdbcType=INTEGER}
+  </delete>
+
+  <!--根据用户ID获取所有的角色-->
+  <select id="findRolesByUserId" parameterType="java.lang.Integer" resultType="String">
+    select sur.roleId from
+    sys_user su left join sys_user_role sur
+    on su.userId = sur.userId
+    where su.userId = #{userId}
+  </select>
+
+  <!--根据用户id获取所有的权限-->
+  <select id="findPersByUserId"  parameterType="java.lang.Integer" resultType="String">
+     select sp.permission from
+     sys_user su
+     right join sys_user_role sur on su.userId = sur.userId
+     right join sys_role sr on sur.roleId = sr.roleId
+     right join sys_role_permission srp on sr.roleId = srp.roleId
+     right join sys_permission sp on srp.permissionId = sp.permissionId
+     where su.userId = #{userId}
+  </select>
+
+  <!--获取最大的工号-->
+  <select id="findMaxNumber" resultType="java.lang.Integer">
+    select max(number) from sys_user
+  </select>
+</mapper>

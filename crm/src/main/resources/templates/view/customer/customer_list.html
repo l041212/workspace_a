@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/bootstrapTable/css/bootstrap-table.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}"  class="ace-main-stylesheet" id="main-ace-style" >
+</head>
+<body class="no-skin">
+<div class="main-content">
+    <div class="main-content-inner">
+        <div class="page-content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div style="padding: 0px 10px 0px;">
+                        <div id="customerToolbar" >
+                            <button shiro:hasPermission="cust:add" class="btn btn-white btn-default btn-round"   onclick="addCustomer()">
+                                <i class="ace-icon fa fa-plus blue"></i>
+                                新增客户
+                            </button>
+                            <a  class="btn btn-white btn-info btn-round"   href="/customer/export">
+                                <i class="ace-icon fa fa-download orange"></i>
+                                导出
+                            </a>
+                            <a href="javascript:void(0);" onclick="importCustomer()" class="btn btn-white btn-default btn-round"   >
+                                <i class="ace-icon fa fa-cloud-upload green"></i>
+                                导入
+                            </a>
+                            <input type="hidden" id="deletes" shiro:hasPermission="cust:delete">
+                            <input type="hidden" id="searchs" shiro:hasPermission="cust:search">
+                            <!--<button class="btn btn-white btn-default btn-round">
+                                <i class="ace-icon fa fa-reply blue"></i>
+                                删除
+                            </button>-->
+                        </div>
+                        <table id="customerTable"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<form id="deleteCustomerForm"  method="post">
+    <input type="hidden" name="_method" value="delete"/>
+</form>
+<script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table.min.js}"></script>
+<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/js/bootbox.js}"></script>
+<script >
+    $(function () {
+
+        top.hideMask();
+        var cusTbale = $('#customerTable').bootstrapTable({
+            method : "GET" , //请求方式（*）
+            url : "/custs",  //请求后台的URL（*）
+            toolbar : "#customerToolbar" , //工具按钮用哪个容器
+            striped: true , //是否显示行间隔色
+            cache: false ,  //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true , //是否显示分页（*）
+            sortable: true ,  //是否启用排序
+            sortOrder: "asc" , //排序方式
+            sidePagination: "server" , //分页方式：client客户端分页，server服务端分页（*）
+            // queryParamsType : "limit",
+            pageNumber: 1 , //初始化加载第一页，默认第一页
+            pageSize: 10 , //每页的记录行数（*）
+            pageList: [10, 25, 50, 100] , //可供选择的每页的行数（*）
+            search: true , //是否显示表格搜索，此搜索是客户端搜索，不会进服务端
+            strictSearch: false ,
+            showColumns: true , //是否显示所有的列
+            showRefresh: false , //是否显示刷新按钮
+            minimumCountColumns: 2 , //最少允许的列数
+            clickToSelect: true , //是否启用点击选中行
+            uniqueId: "id" , //每一行的唯一标识，一般为主键列
+            showToggle: false , //是否显示详细视图和列表视图的切换按钮
+            cardView: false ,   //是否显示详细视图
+            detailView: false ,
+            queryParams : function (params){
+                var temp = {
+                    limit : params.limit ,
+                    page : params.offset/params.limit  ,
+                    keywords : params.search ,
+                    sort : params.sort ,
+                    order : params.order,
+                    pageNumber : this.pageNumber,
+                    pageSize : this.pageSize
+                }
+                return temp;
+            } ,     //传递参数（*）
+            columns: [{
+                field : 'name',
+                title : "姓名",
+                align: 'center',
+                valign: 'middle'
+            },{
+                field : 'company',
+                title : "组织",
+                align: 'center',
+                valign: 'middle',
+                sortable:true
+            },{
+                field : 'companyType' ,
+                title : "组织类型",
+                align: 'center',
+                valign: 'middle',
+                sortable:true
+            },{
+                field : 'telephone' ,
+                title : "电话",
+                align: 'center',
+                valign: 'middle',
+                sortable:true
+            },{
+                field : 'phone',
+                title : "座机",
+                align: 'center',
+                valign: 'middle',
+                sortable:true
+            },{
+                field : 'accepter',
+                title : "受理人",
+                align: 'center',
+                valign: 'middle',
+                sortable:true
+            },{
+                field : 'visitType' ,
+                title : "访问类型",
+                align: 'center',
+                valign: 'middle',
+                sortable:true
+            },{
+                field : 'isReply',
+                title : "是否回复",
+                align: 'center',
+                valign: 'middle',
+                sortable:true
+            },{
+                field : 'createTime' ,
+                title : "创建时间",
+                align: 'center',
+                valign: 'middle',
+                sortable:true
+            },{
+                title : "操作",
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                    return '<div class=" btn-group">' +
+                        '<button class="btn btn-xs btn-info editCust" onclick="editCustomer(\''+row.id+'\')">'+
+                        '<i class="ace-icon fa fa-pencil bigger-120"></i>'+
+                        '</button>'+
+                        '<button class="btn btn-xs btn-danger deleteCust" onclick="deleteCustomer(&apos;'+row.id+'&apos;,&apos;'+row.name+'&apos;)" >'+
+                        '<i class="ace-icon fa fa-trash-o bigger-120"></i>'+
+                        '</button>'+
+                        '</div>' ;
+                }
+            }],
+            onLoadSuccess: function(){  //加载成功时执行
+                if(!document.getElementById("searchs")){
+                    $(".editCust").remove();
+                }
+                if(!document.getElementById("deletes")){
+                    $(".deleteCust").remove();
+                }
+                top.hideMask();
+            }
+        });
+
+    })
+    function  deleteCustomer(id,name) {
+        bootbox.confirm("确定要删除["+name+"]吗?", function(result) {
+            if(result){
+                $("#deleteCustomerForm").attr("action","/cust/"+id).submit();
+                return false;
+            }
+        });
+    }
+
+    function addCustomer() {
+        top.showMask();
+        var diag = new top.Dialog();
+        diag.Drag=true;
+        diag.Title="新增客户";
+        diag.ShowMaxButton = true;	//最大化按钮
+        diag.ShowMinButton = true;
+        diag.URL = "/cust";
+        diag.Width = 800;
+        diag.Height = 500;
+        diag.CancelEvent = function(){ //关闭事件
+            top.hideMask();
+            setTimeout("self.location.reload()",100);
+            diag.close();
+        };
+        diag.show();
+    }
+
+    function editCustomer(id) {
+        top.showMask();
+        var diag = new top.Dialog();
+        diag.Drag=true;
+        diag.Title="编辑客户信息";
+        diag.ShowMaxButton = true;	//最大化按钮
+        diag.ShowMinButton = true;
+        diag.URL = "/cust/"+id;
+        diag.Width = 800;
+        diag.Height = 500;
+        diag.CancelEvent = function(){ //关闭事件
+            top.hideMask();
+            setTimeout("self.location.reload()",100);
+            diag.close();
+        };
+        diag.show();
+    }
+
+    function exportCustomer() {
+        $.ajax({
+            type:"get",
+            url:"/customer/export",
+            success:function(d) {
+
+            }
+        })
+    }
+
+    function importCustomer() {
+        top.showMask();
+        var diag = new top.Dialog();
+        diag.Drag=true;
+        diag.Title="EXCEL 导入到客户列表";
+        diag.ShowMaxButton = true;	//最大化按钮
+        diag.URL = "/customer/import";
+        diag.Width = 300;
+        diag.Height = 150;
+        diag.CancelEvent = function(){ //关闭事件
+            top.hideMask();
+            setTimeout("self.location.reload()",100);
+            diag.close();
+        };
+        diag.show();
+    }
+
+</script>
+</body>
+</html>

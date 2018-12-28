@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zh.crm.mapper.FriendEventMapper">
+
+	<resultMap id="BaseResultMap" type="com.zh.crm.entity.FriendEvent">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="time_from" property="timeFrom" jdbcType="TIMESTAMP" />
+		<result column="time_to" property="timeTo" jdbcType="TIMESTAMP" />
+		<result column="location" property="location" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="photo" property="photo" jdbcType="VARCHAR" />
+		<result column="summary" property="summary" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<collection property="members" ofType="com.zh.crm.entity.FriendMember" resultMap="MemberResultMap"/>		
+	</resultMap>
+	
+	<resultMap id="MemberResultMap" type="com.zh.crm.entity.FriendMember">
+		<id column="m_id" property="id" jdbcType="INTEGER" />
+		<result column="m_type_id" property="typeId" jdbcType="INTEGER" />
+		<result column="m_name" property="name" jdbcType="VARCHAR" />
+		<result column="m_sex" property="sex" jdbcType="INTEGER" />
+		<result column="m_identity" property="identity" jdbcType="VARCHAR" />
+		<result column="m_birthday" property="birthday" jdbcType="TIMESTAMP" />
+		<result column="m_phone" property="phone" jdbcType="VARCHAR" />
+		<result column="m_email" property="email" jdbcType="VARCHAR" />
+		<result column="m_address" property="address" jdbcType="VARCHAR" />
+		<result column="m_education" property="education" jdbcType="INTEGER" />
+		<result column="m_job" property="job" jdbcType="INTEGER" />
+		<result column="m_company" property="company" jdbcType="VARCHAR" />
+		<result column="m_post" property="post" jdbcType="VARCHAR" />
+		<result column="m_line" property="line" jdbcType="VARCHAR" />
+		<result column="m_destination" property="destination" jdbcType="VARCHAR" />
+		<result column="m_apply_time" property="applyTime" jdbcType="TIMESTAMP" />
+		<result column="m_status" property="status" jdbcType="INTEGER" />
+		<association property="type" resultMap="com.zh.crm.mapper.TypeMapper.BaseResultMap" columnPrefix="t_" />
+	</resultMap>
+	
+	<sql id="BaseColumnList">
+		e.`id`, e.`title`, e.`time_from`, e.`time_to`, e.`location`, e.`content`, e.`photo`, e.`summary`,e.`status`,
+		m.`id` m_id, m.`type_id` m_type_id, m.`name` m_name, m.`sex` m_sex, m.`identity` m_identity,
+		m.`birthday` m_birthday, m.`phone` m_phone, m.`email` m_email, m.`address` m_address,
+		m.`education` m_education, m.`job` m_job, m.`company` m_company, m.`post` m_post,
+		m.`line` m_line, m.`destination` m_destination, m.`apply_time` m_apply_time, m.`status` m_status,
+		t.`id` t_id, t.`text` t_text, t.`value` t_value, t.`title` t_title, t.`parentId` t_parentId, t.`parentName` t_parentName, t.`status` t_status
+	</sql>
+	
+	<sql id="BaseTable">
+		`t_friend_event` e
+		left join `t_friend_member_event` me on e.`id` = me.`event_id`
+		left join `t_friend_member` m on me.`member_id` = m.`id`
+		left join `sys_type` t on m.`type_id` = t.`id`
+	</sql>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select <include refid="BaseColumnList" /> 
+		from <include refid="BaseTable" /> 
+		where e.id = #{id, jdbcType=INTEGER}
+	</select>
+	
+	<select id="findAllFriendEvent" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select <include refid="BaseColumnList" />
+		from <include refid="BaseTable" /> 
+		<where>
+			<if test="keywords != null and keywords != ''">
+		      and (
+			      e.title like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      e.location like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+			      or
+			      e.summary like  CONCAT(CONCAT('%', #{keywords, jdbcType=VARCHAR}), '%')
+		      )
+		    </if>
+			<if test="timeFrom != null">
+				and e.time_from &gt;=  #{timeFrom, jdbcType=TIMESTAMP})
+			</if>
+			<if test="timeTo != null">
+				and e.time_to &lt;=  #{timeTo, jdbcType=TIMESTAMP})
+			</if>
+			<if test="status != null">
+				and e.status = #{status, jdbcType=INTEGER}
+			</if>
+		</where>
+		<choose>
+			<when test="sort == 'title'">order by e.`title`</when>
+			<when test="sort == 'time_to'">order by e.`time_to`</when>
+			<when test="sort == 'location'">order by e.`location`</when>
+			<otherwise>order by e.`time_from`</otherwise>
+		</choose>
+		<choose>
+			<when test="order == 'desc'">desc</when>
+			<otherwise>asc</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insertSelective" parameterType="java.util.Map">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into t_friend_event
+			<trim prefix="(" suffix=")" suffixOverrides=",">
+				<if test="title != null and title != ''">
+					title,
+				</if>
+				<if test="timeFrom != null">
+					time_from,
+				</if>
+				<if test="timeTo != null">
+					time_to,
+				</if>
+				<if test="location != null and location != ''">
+					location,
+				</if>
+				<if test="content != null and content != ''">
+					content,
+				</if>
+				<if test="photo != null and photo != ''">
+					photo,
+				</if>
+				<if test="summary != null and summary != ''">
+					summary,
+				</if>
+				<if test="status != null">
+					status,
+				</if>
+			</trim>
+			<trim prefix="values (" suffix=")" suffixOverrides=",">
+				<if test="title != null and title != ''">
+					#{title, jdbcType=VARCHAR},
+				</if>
+				<if test="timeFrom != null">
+					#{timeFrom, jdbcType=TIMESTAMP},
+				</if>
+				<if test="timeTo != null">
+					#{timeTo, jdbcType=TIMESTAMP},
+				</if>
+				<if test="location != null and location != ''">
+					#{location, jdbcType=VARCHAR},
+				</if>
+				<if test="content != null and content != ''">
+					#{content, jdbcType=VARCHAR},
+				</if>
+				<if test="photo != null and photo != ''">
+					#{photo, jdbcType=VARCHAR},
+				</if>
+				<if test="summary != null and summary != ''">
+					#{summary, jdbcType=VARCHAR},
+				</if>
+				<if test="status != null">
+					#{status, jdbcType=INTEGER},
+				</if>
+			</trim>
+	</insert>
+	
+	<insert id="insertMemberEvent" parameterType="java.lang.Integer">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into t_friend_member_event (member_id, event_id)
+		values (#{memberId, jdbcType=INTEGER}, #{eventId, jdbcType=INTEGER})
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="java.util.Map">
+		update t_friend_event
+		<set>
+			<if test="title != null and title != ''">
+				title = #{title, jdbcType=VARCHAR},
+			</if>
+			<if test="timeFrom != null">
+				time_from = #{timeFrom, jdbcType=TIMESTAMP},
+			</if>
+			<if test="timeTo != null">
+				time_to = #{timeTo, jdbcType=TIMESTAMP},
+			</if>
+			<if test="location != null and location != ''">
+				location = #{location, jdbcType=VARCHAR},
+			</if>
+			<if test="content != null and content != ''">
+				content = #{content, jdbcType=VARCHAR},
+			</if>
+			<if test="photo != null and photo != ''">
+				photo = #{photo, jdbcType=VARCHAR},
+			</if>
+			<if test="summary != null and summary != ''">
+				summary = #{summary, jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status, jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id, jdbcType=INTEGER}
+	</update>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from t_friend_event
+		where id = #{id, jdbcType=INTEGER}
+	</delete>
+	
+	<delete id="deleteMemberEvent" parameterType="java.lang.Integer">
+		delete from t_friend_member_event
+		where event_id = #{eventId, jdbcType=INTEGER}
+	</delete>
+	 
+</mapper>

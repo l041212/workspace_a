@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/plugins/bootstrapZtree/css/bootstrapStyle.css}" />
+    <link rel="stylesheet" th:href="@{/plugins/bootstrapTable/css/bootstrap-table.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/ace/ace.min.css}"  class="ace-main-stylesheet" id="main-ace-style" >
+</head>
+<body class="no-skin">
+<div class="main-content">
+    <div class="main-content-inner">
+        <div class="page-content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="widget-box widget-color-blue2">
+                        <div class="widget-header">
+                            <h4 class="widget-title lighter smaller">权限</h4>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-8">
+                                <div class="row">
+                                    <div class="col-xs-2">
+                                        <ul id="leftTree" class="ztree"></ul>
+                                    </div>
+                                    <div class="col-xs-10">
+                                        <div style="background-color: #FFF;padding: 0px 18px 0px;margin: 0;height:100%;border-left: 1px dotted #E2E2E2;;">
+                                            <div id="permtoolbar" >
+                                                <button class="btn btn-white btn-default btn-round" id="addPerm"  th:onclick="${'addPerms()'}">
+                                                    <i class="ace-icon fa fa-plus blue"></i>
+                                                    新增权限
+                                                </button>
+                                                <button class="btn btn-white btn-default btn-round" th:if="${perm!=null}" th:onclick="${'goBack('''+perm.parentId+''')'}">
+                                                    <i class="ace-icon fa fa-reply blue"></i>
+                                                    返回
+                                                </button>
+                                            </div>
+                                            <table id="permTable"></table>
+                                        </div>
+                                        <form id="deletePermForm"  method="post">
+                                            <input type="hidden" name="_method" value="delete"/>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+<!--<script th:src="@{plugins/bootstrapZtree/js/jquery.min.js}"></script>-->
+<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.core.js}"></script>
+<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.excheck.js}"></script>
+<script th:src="@{/plugins/bootstrapZtree/js/jquery.ztree.exedit.js}"></script>
+
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table.min.js}"></script>
+<script th:src="@{/plugins/bootstrapTable/js/bootstrap-table-zh-CN.min.js}"></script>
+<script th:src="@{/js/bootbox.js}"></script>
+<script th:inline="javascript">
+    var zNodes = [[${perms}]];
+    zNodes = eval(zNodes);
+    var setting = {
+        view: {
+            selectedMulti: false
+        },
+        check: {
+            enable: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        edit: {
+            enable: false
+        },
+        callback: {
+            beforeClick: zTreeOnClick
+        }
+    };
+
+    function zTreeOnClick(treeId, treeNode, clickFlag){
+        top.showMask();
+        var diag = new top.Dialog();
+        diag.Drag=true;
+        diag.Title="编辑权限";
+        diag.URL = "/toEdit/"+ treeNode.id;
+        diag.Width = 400;
+        diag.Height = 380;
+        diag.CancelEvent = function(){ //关闭事件
+            top.hideMask();
+            setTimeout("self.location.reload()",100);
+            diag.close();
+        };
+        diag.show();
+    }
+    $(document).ready(function(){
+       var zTree = $.fn.zTree.init($("#leftTree"), setting, zNodes);
+        //zTree.expandAll(true);
+    });
+
+    $(function(){
+        $('#permTable').bootstrapTable({
+            url : "/getPerm/" + [[${parentId}]],  //请求后台的URL（*）
+            method : "GET" , //请求方式（*）
+            toolbar : "#permtoolbar" , //工具按钮用哪个容器
+            striped: true , //是否显示行间隔色
+            cache: false ,  //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: false , //是否显示分页（*）
+            sortable: true ,  //是否启用排序
+            sortOrder: "asc" , //排序方式
+            sidePagination: "client" , //分页方式：client客户端分页，server服务端分页（*）
+            // queryParamsType : "limit",
+            pageNumber: 1 , //初始化加载第一页，默认第一页
+            pageSize: 15 , //每页的记录行数（*）
+            pageList: [15, 25, 50, 100] , //可供选择的每页的行数（*）
+            search: true , //是否显示表格搜索，此搜索是客户端搜索，不会进服务端
+            strictSearch: false ,
+            showColumns: true , //是否显示所有的列
+            showRefresh: false , //是否显示刷新按钮
+            minimumCountColumns: 2 , //最少允许的列数
+            clickToSelect: true , //是否启用点击选中行
+            uniqueId: "permissionId" , //每一行的唯一标识，一般为主键列
+            showToggle: false , //是否显示详细视图和列表视图的切换按钮
+            cardView: false ,   //是否显示详细视图
+            detailView: false ,
+            columns: [{
+                field : 'permissionOrder',
+                title : "序号",
+                align: 'center',
+                valign: 'middle',
+                sortable : true
+            },{
+                field : 'permissionName',
+                title : "名称",
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                       var status ;
+                       if(row.permissionType == 0){
+                           status = "菜单";
+                       }else if(row.permissionType == 2){
+                           status = "按钮";
+                       }else if(row.permissionType == 1){
+                           status = "资源";
+                       }
+                       return '<a href="javascript:goSonmenu(\''+row.permissionId+'\')">' +
+                                '<i class="'+row.permissionIcon+'"></i>&nbsp;'+ value +
+                              '</a>' +
+                              '<span class="label label-important arrowed-in">'+status+'</span>';
+                   }
+            },{
+                field : 'permission' ,
+                title : "编码",
+                align: 'center',
+                valign: 'middle',
+            },{
+                field : 'permissionUrl' ,
+                title : "资源路径",
+                align: 'center',
+                valign: 'middle',
+            },{
+                title : "操作",
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                    return '<div class=" btn-group">' +
+                                '<button class="btn btn-xs btn-info" onclick="editPerm(\''+row.permissionId+'\')">'+
+                                     '<i class="ace-icon fa fa-pencil bigger-120"></i>'+
+                                 '</button>'+
+                               /* '<button class="btn btn-xs btn-warning" onclick="editPermIcon(\''+row.permissionId+'\')">'+
+                                '<i class="ace-icon fa fa-flag  bigger-120"></i>'+
+                                '</button>'+*/
+                                '<button class="btn btn-xs btn-danger" onclick="deletePerm(&apos;'+row.permissionId+'&apos;,&apos;'+row.permissionName+'&apos;)" >'+
+                                '<i class="ace-icon fa fa-trash-o bigger-120"></i>'+
+                                '</button>'+
+                         '</div>' ;
+                 }
+            }],
+            onLoadSuccess: function(){  //加载成功时执行
+                top.hideMask();
+            }
+        });
+
+    });
+
+    function goSonmenu(parentId){
+        window.location.href="/perms/"+parentId;
+    }
+
+    function goBack(parentId){
+        window.location.href="/perms/"+parentId;
+    }
+
+    function deletePerm(id,name) {
+        bootbox.confirm("确定要删除["+name+"]吗?", function(result) {
+            if(result){
+                $.ajax({
+                    type:"get",
+                    url:"/hasPermSon/"+id,
+                    dataType:"json",
+                    success:function(data){
+                        if(data==0){
+                            $("#deletePermForm").attr("action","/perm/"+id+"/"+[[${parentId}]]).submit();
+                            return false;
+                        }else{
+                            bootbox.dialog({
+                                message: "<span class='bigger-110'>删除失败！请先删除子级权限.</span>",
+                                buttons:
+                                    {
+                                        "button" :
+                                            {
+                                                "label" : "确定",
+                                                "className" : "btn-sm btn-success"
+                                            }
+                                    }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function editPerm(id){
+        top.showMask();
+        var diag = new top.Dialog();
+        diag.Drag=true;
+        diag.Title="编辑权限";
+        diag.URL = "/toEdit/"+ id;
+        diag.Width = 400;
+        diag.Height = 380;
+        diag.CancelEvent = function(){ //关闭事件
+            top.hideMask();
+            setTimeout("self.location.reload()",100);
+            diag.close();
+        };
+        diag.show();
+    }
+    function editPermIcon(id) {
+        top.showMask()
+        var diag = new top.Dialog();
+        diag.Drag=true;
+        diag.Title ="编辑图标";
+        diag.URL = "/toEditPermIcon/"+id;
+        diag.Width = 800;
+        diag.Height = 380;
+        diag.CancelEvent = function(){ //关闭事件
+            if(diag.innerFrame.contentWindow.document.getElementById('zhongxin').style.display == 'none'){
+                top.showMask();
+                setTimeout("location.reload()",100);
+            }
+            diag.close();
+        };
+        diag.show();
+    }
+
+    function addPerms() {
+        top.showMask();
+        var diag = new top.Dialog();
+        diag.Drag=true;
+        diag.Title="新增权限";
+        diag.URL = "/perm/"+ [[${parentId}]];
+        diag.Width = 400;
+        diag.Height = 380;
+        diag.CancelEvent = function(){ //关闭事件
+            top.hideMask();
+            setTimeout("self.location.reload()",100);
+            diag.close();
+        };
+        diag.show();
+    }
+
+</script>
+</body>
+</html>
