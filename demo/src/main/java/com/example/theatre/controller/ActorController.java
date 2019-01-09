@@ -27,26 +27,26 @@ public class ActorController {
 
 	private final static Logger logger = LoggerFactory.getLogger(ActorController.class);
 	@Autowired
-	private Item item;	
-	@Resource
-	private Environment environment;
+	private Item item;
 	@Autowired
 	private ActorService actorService;
 	@Autowired
 	private CityService cityService;
+	@Resource
+	private Environment environment;
 
 	@RequestMapping(path = "/helloworld", method = RequestMethod.GET)
 	public void helloWorld(HttpServletRequest request, HttpServletResponse response) {
-		
+
 		logger.info("--------------------------------------");
 		logger.info(environment.getProperty("item.name"));
 		logger.info(environment.getProperty("server.servlet.context-path"));
 		logger.error(environment.getProperty("server.servlet.context-path"));
 		logger.info("--------------------------------------");
-		
+
 		try {
 			Actor actor = actorService.findActor(1);
-			City city = cityService.findCity(1);		
+			City city = cityService.findCity(1);
 			PrintWriter writer = response.getWriter();
 			writer.print("hello world\n");
 			writer.print("name: " + item.getName() + "\n");
@@ -58,7 +58,7 @@ public class ActorController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }
