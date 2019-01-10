@@ -9,14 +9,6 @@ spring:
     static-locations:
     - classpath:/static
     - classpath:/templates
-  thymeleaf:
-    prefix: classpath:/templates
-    suffix: .html
-    cache: false
-    mode: html
-    encoding: utf-8
-    servlet:
-      content-type: text/html; charset=utf-8
 #  datasource:
 #      type: com.zaxxer.hikari.HikariDataSource
 #      driver-class-name: com.mysql.cj.jdbc.Driver

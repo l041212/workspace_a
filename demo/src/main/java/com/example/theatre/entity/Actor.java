@@ -1,7 +1,7 @@
 package com.example.theatre.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Actor implements Serializable {
 
@@ -9,7 +9,7 @@ public class Actor implements Serializable {
 	private Integer actorId;
 	private String firstName;
 	private String lastName;
-	private Date lastUpdate;
+	private Timestamp lastUpdate;
 
 	public Integer getActorId() {
 		return actorId;
@@ -17,6 +17,14 @@ public class Actor implements Serializable {
 
 	public void setActorId(Integer actorId) {
 		this.actorId = actorId;
+	}
+
+	public Integer getId() {
+		return actorId;
+	}
+
+	public void setId(Integer id) {
+		this.actorId = id;
 	}
 
 	public String getFirstName() {
@@ -35,11 +43,11 @@ public class Actor implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public Date getLastUpdate() {
+	public Timestamp getLastUpdate() {
 		return lastUpdate;
 	}
 
-	public void setLastUpdate(Date lastUpdate) {
+	public void setLastUpdate(Timestamp lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
 

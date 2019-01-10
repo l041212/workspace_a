@@ -36,7 +36,7 @@ public class ActorController {
 	private Environment environment;
 
 	@RequestMapping(path = "/helloworld", method = RequestMethod.GET)
-	public void helloWorld(HttpServletRequest request, HttpServletResponse response) {
+	public void helloWorld(HttpServletRequest request, HttpServletResponse response) throws InstantiationException, IllegalAccessException {
 
 		logger.info("--------------------------------------");
 		logger.info(environment.getProperty("item.name"));
@@ -45,8 +45,8 @@ public class ActorController {
 		logger.info("--------------------------------------");
 
 		try {
-			Actor actor = actorService.findActor(1);
-			City city = cityService.findCity(1);
+			Actor actor = actorService.getItem(1);
+			City city = cityService.getItem(1);
 			PrintWriter writer = response.getWriter();
 			writer.print("hello world\n");
 			writer.print("name: " + item.getName() + "\n");
@@ -54,6 +54,18 @@ public class ActorController {
 			writer.print("count: " + item.getCount() + "\n");
 			writer.println("actor: " + actor.getFirstName() + " " + actor.getLastName());
 			writer.println("city:" + city.getName());
+			/*
+			Actor item = new Actor();
+			item.setFirstName("Ronie");
+			item.setLastName("Wood");
+			item.setLastUpdate(new Timestamp(Date.class.newInstance().getTime()));
+			item = actorService.insertItem(item);
+			writer.println("actor2: " + item.getFirstName() + " " + item.getLastName());
+			item.setLastName("West");
+			item = actorService.updateItem(item);
+			writer.println("actor3: " + item.getFirstName() + " " + item.getLastName());
+			actorService.deleteItem(item.getActorId());
+			*/
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
