@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+.card {
+	margin-top: 20px;
+}
+
+.form-group input {
+	float: right;
+}
+
+#confirm {
+	float: right;
+	margin-top: 20px;
+}

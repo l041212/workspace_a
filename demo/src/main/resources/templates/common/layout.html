@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title th:text="${title}"></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" th:href="@{/plugin/bootstrap-4.2.1-dist/css/bootstrap.min.css}">
+		<style class="style_" th:include="::style_"></style>
+		<script type="text/javascript" th:src="@{/script/jquery-3.3.1.js}"></script>
+		<script type="text/javascript" th:src="@{/plugin/bootstrap-4.2.1-dist/js/bootstrap.min.js}"></script>
+		<script type="text/javascript" th:src="@{/plugin/bootstrap-4.2.1-dist/js/bootstrap.bundle.min.js}"></script>
+		<script type="text/javascript" th:src="@{/script/common/kakera.js}" th:text="'contextPath='+@{/}"></script>
+		<script class="script_" th:include="::script_"></script>
+	</head>
+	<body>
+		<div class="layoutHidden">
+			<input id="JSESSIONID" type="hidden" th:value="${#httpSession!=null?#httpSession.getId():''}" />
+		</div>
+		<div class="body_" th:include="::body_"></div>
+	</body>
+</html>

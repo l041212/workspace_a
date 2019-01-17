@@ -23,19 +23,25 @@ public class ActorTempController {
 
 	@GetMapping("/info")
 	public String info(HttpServletRequest request, Map<String, Object> map) {
-		
+
 		String sql = "select * from actor";
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
-		
+
 		logger.info("------------------------");
 		logger.info(request.toString());
 		map.put("test", "test...");
 		map.put("list", list);
 		logger.info(map.toString());
 		logger.info("------------------------");
-	
+
 		return "/theatre/actor/info.html";
 
+	}
+
+	@GetMapping("/test")
+	public String test(HttpServletRequest request, Map<String, Object> map) {
+		request.getSession();
+		return "/theatre/actor/test.html";
 	}
 
 }

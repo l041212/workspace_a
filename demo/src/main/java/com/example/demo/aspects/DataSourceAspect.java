@@ -22,7 +22,7 @@ public class DataSourceAspect {
 	private final static Logger logger = LoggerFactory.getLogger(DataSourceAspect.class);
 
 	@Pointcut("@annotation(com.example.demo.annotations.TargetDataSource)")
-	public void targetPointCut() {
+	private void targetPointCut() {
 	}
 
 	@Before(value = "targetPointCut() && @annotation(TargetDataSource)", argNames = "JoinPoint, TargetDataSource")
