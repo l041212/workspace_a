@@ -40,7 +40,6 @@ public class ActorTempController {
 
 	@GetMapping("/test")
 	public String test(HttpServletRequest request, Map<String, Object> map) {
-		request.getSession();
 		return "/theatre/actor/test.html";
 	}
 
