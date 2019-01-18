@@ -7,7 +7,7 @@
 		<id column="actor_id" property="actorId" jdbcType="INTEGER" />
 		<result column="first_name" property="firstName" jdbcType="VARCHAR" />
 		<result column="last_name" property="lastName" jdbcType="VARCHAR" />
-		<result column="last_update" property="lastUpdate" jdbcType="DATE" />
+		<result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
 	</resultMap>
 
 	<select id="getItemById" parameterType="java.lang.Integer" resultMap="baseResultMap">
