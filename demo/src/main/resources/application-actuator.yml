@@ -1,0 +1,15 @@
+
+info:
+  author: Hekate
+  version: '@project.version@'
+  
+management:
+  endpoint:
+    health:
+      show-details: always  endpoints:
+    web:
+      base-path: /actuator
+#      exposure:#        include: '*'
+  server:    port: 8088
+            
+  
