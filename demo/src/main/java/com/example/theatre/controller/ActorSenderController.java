@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.configurations.RabbitMQDirectConfigurer;
-import com.example.demo.configurations.RabbitMQFanoutConfigurer;
-import com.example.demo.configurations.RabbitMQTopicConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurer.DelayConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurer.DirectConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurer.FanoutConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurer.TopicConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurer.XdelayConfigurer;
 
 @RestController
 @RequestMapping("/theatre/actorSender")
@@ -27,15 +29,31 @@ public class ActorSenderController {
 	public void senderTest(HttpServletRequest request, HttpServletResponse response) {
 		for (Integer i = 0; i < 10; i++) {
 			new Thread(() -> {
-				Map<String, Object> message = new HashMap<String, Object>();
-				message.put("name", "human");
-				message.put("message", "yahoo~~");
-				message.put("id", Thread.currentThread().getId());
-				rabbitTemplate.convertAndSend(RabbitMQDirectConfigurer.DIRECT_EXCHANGE1, "direct.bindingkey1", message);
-				rabbitTemplate.convertAndSend(RabbitMQDirectConfigurer.DIRECT_EXCHANGE1, "direct.bindingkey2", message);
-				rabbitTemplate.convertAndSend(RabbitMQFanoutConfigurer.FANOUT_EXCHANGE1, "", message);
-				rabbitTemplate.convertAndSend(RabbitMQTopicConfigurer.TOPIC_EXCHANGE1, "topic.bindingkey1.aa", message);
-				rabbitTemplate.convertAndSend(RabbitMQTopicConfigurer.TOPIC_EXCHANGE1, "topic.bindingkey2.bb", message);
+				Map<String, Object> object = new HashMap<String, Object>();
+				object.put("name", "human");
+				object.put("message", "yahoo~~");
+				object.put("id", Thread.currentThread().getId());
+				rabbitTemplate.convertAndSend(DirectConfigurer.DIRECT_EXCHANGE1, "direct.bindingkey1", object);
+				rabbitTemplate.convertAndSend(DirectConfigurer.DIRECT_EXCHANGE1, "direct.bindingkey2", object);
+				rabbitTemplate.convertAndSend(FanoutConfigurer.FANOUT_EXCHANGE1, "", object);
+				rabbitTemplate.convertAndSend(TopicConfigurer.TOPIC_EXCHANGE1, "topic.bindingkey1.aa", object);
+				rabbitTemplate.convertAndSend(TopicConfigurer.TOPIC_EXCHANGE1, "topic.bindingkey2.bb", object);
+				rabbitTemplate.convertAndSend(DelayConfigurer.DELAY_EXCHANGE1, "delay.bindingkey1", object, message -> {
+					message.getMessageProperties().setExpiration(String.valueOf(6*1000));
+					return message;
+				});
+				rabbitTemplate.convertAndSend(DelayConfigurer.DELAY_EXCHANGE1, "delay.bindingkey2", object, message -> {
+					message.getMessageProperties().setExpiration(String.valueOf(12*1000));
+					return message;
+				});
+				rabbitTemplate.convertAndSend(XdelayConfigurer.XDELAY_EXCHANGE1, "xdelay.bindingkey.1", object, message -> {
+					message.getMessageProperties().setDelay(6*1000);
+					return message;
+				});
+				rabbitTemplate.convertAndSend(XdelayConfigurer.XDELAY_EXCHANGE1, "xdelay.bindingkey.2", object, message -> {
+					message.getMessageProperties().setDelay(12*1000);
+					return message;
+				});
 			}).start();
 		}
 	}

@@ -7,19 +7,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.configurations.RabbitMQTopicConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurer.TopicConfigurer;
 
 @Component
-public class TestTopicReceiver {
+public class TopicReceiver {
 
-	private final static Logger logger = LoggerFactory.getLogger(TestTopicReceiver.class);
+	private final static Logger logger = LoggerFactory.getLogger(TopicReceiver.class);
 
-	@RabbitListener(queues = RabbitMQTopicConfigurer.TOPIC_QUEUE1)
+	@RabbitListener(queues = TopicConfigurer.TOPIC_QUEUE1)
 	public void receiverTest1(Map<String, Object> map) {
 		logger.info("topic q1: " + map);
 	}
 
-	@RabbitListener(queues = RabbitMQTopicConfigurer.TOPIC_QUEUE2)
+	@RabbitListener(queues = TopicConfigurer.TOPIC_QUEUE2)
 	public void receiverTest2(Map<String, Object> map) {
 		logger.info("topic q2: " + map);
 	}

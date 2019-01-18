@@ -1,4 +1,4 @@
-package com.example.demo.configurations;
+package com.example.demo.configurations.RabbitMQConfigurer;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQDirectConfigurer {
+public class DirectConfigurer {
 
 	public static final String DIRECT_QUEUE1 = "direct.queue1";
 	public static final String DIRECT_QUEUE2 = "direct.queue2";

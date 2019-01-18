@@ -1,4 +1,4 @@
-package com.example.demo.configurations;
+package com.example.demo.configurations.RabbitMQConfigurer;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQFanoutConfigurer {
+public class FanoutConfigurer {
 
 	public static final String FANOUT_QUEUE1 = "fanout.queue1";
 	public static final String FANOUT_QUEUE2 = "fanout.queue2";

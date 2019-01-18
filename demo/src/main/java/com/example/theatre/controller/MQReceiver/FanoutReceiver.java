@@ -7,19 +7,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.configurations.RabbitMQFanoutConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurer.FanoutConfigurer;
 
 @Component
-public class TestFanoutReceiver {
+public class FanoutReceiver {
 
-	private final static Logger logger = LoggerFactory.getLogger(TestFanoutReceiver.class);
+	private final static Logger logger = LoggerFactory.getLogger(FanoutReceiver.class);
 
-	@RabbitListener(queues = RabbitMQFanoutConfigurer.FANOUT_QUEUE1)
+	@RabbitListener(queues = FanoutConfigurer.FANOUT_QUEUE1)
 	public void receiverTest1(Map<String, Object> map) {
 		logger.info("fanout q1: " + map);
 	}
 
-	@RabbitListener(queues = RabbitMQFanoutConfigurer.FANOUT_QUEUE2)
+	@RabbitListener(queues = FanoutConfigurer.FANOUT_QUEUE2)
 	public void receiverTest2(Map<String, Object> map) {
 		logger.info("fanout q2: " + map);
 	}

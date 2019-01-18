@@ -7,19 +7,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.configurations.RabbitMQDirectConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurer.DirectConfigurer;
 
 @Component
-public class TestDirectReceiver {
+public class DirectReceiver {
 
-	private final static Logger logger = LoggerFactory.getLogger(TestDirectReceiver.class);
+	private final static Logger logger = LoggerFactory.getLogger(DirectReceiver.class);
 
-	@RabbitListener(queues = RabbitMQDirectConfigurer.DIRECT_QUEUE1)
+	@RabbitListener(queues = DirectConfigurer.DIRECT_QUEUE1)
 	public void receiverTest1(Map<String, Object> map) {
 		logger.info("direct q1: " + map);
 	}
 
-	@RabbitListener(queues = RabbitMQDirectConfigurer.DIRECT_QUEUE2)
+	@RabbitListener(queues = DirectConfigurer.DIRECT_QUEUE2)
 	public void receiverTest2(Map<String, Object> map) {
 		logger.info("direct q2: " + map);
 	}
