@@ -15,8 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.example.demo.utils.WebSocketKit;
 
-@ServerEndpoint("/theatre/testServer/{sid}")
+@ServerEndpoint("/theatre/testServer/{sessionId}")
 @Component
 public class TestServer extends BaseServer {
 
@@ -24,9 +25,9 @@ public class TestServer extends BaseServer {
 	
 	@OnOpen
 	@Override	
-	public boolean onOpen(Session session, @PathParam("sid") String sid) {
-		if(super.onOpen(session, sid)) {
-			logger.info("session id : "+ sid + " was been opened, current session count : " + count);
+	public boolean onOpen(Session session, @PathParam("sessionId") String sessionId) {
+		if(super.onOpen(session, sessionId)) {
+			logger.info("session id : "+ sessionId + " was been opened, current session count : " + WebSocketKit.getCount());
 			return true;
 		}
 		return false;
@@ -36,7 +37,7 @@ public class TestServer extends BaseServer {
 	@Override
 	public boolean onClose() {
 		if(super.onClose()) {
-			logger.info("session id : "+ this.sid + " was been closed, current session count : " + count);
+			logger.info("session id : "+ this.sessionId + " was been closed, current session count : " + WebSocketKit.getCount());
 		}
 		return false;
 	}
@@ -44,16 +45,16 @@ public class TestServer extends BaseServer {
 	@OnError
 	@Override
 	public void onError(Session session, Throwable error) {
-		super.onError(session, error);
+		error.printStackTrace();
 	}
 
 	@OnMessage
 	@Override
 	public void onMessage(Session session, String message) {
 		Map<String, Object> map = JSON.parseObject(message);
-		logger.info("session id : " + this.sid + ", message : " + map);
+		logger.info("session id : " + this.sessionId + ", message : " + map);
 		if (map.get("data") != null) {
-				sendMessage(this.sid, map.get("receiver").toString(), JSON.parseObject(map.get("data").toString()));
+			WebSocketKit.sendMessage(this.sessionId, map.get("receiver").toString(), JSON.parseObject(map.get("data").toString()));
 		}
 	}
 
