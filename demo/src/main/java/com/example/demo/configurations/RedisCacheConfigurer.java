@@ -36,15 +36,16 @@ public class RedisCacheConfigurer extends CachingConfigurerSupport {
 	private StringRedisSerializer stringSerializer = new StringRedisSerializer();
 	private GenericFastJsonRedisSerializer objectSerializer = new GenericFastJsonRedisSerializer();
 	private SerializationPair<String> stringSerializationPair = SerializationPair.fromSerializer(stringSerializer);
-	private SerializationPair<?> objectSerializationPair = SerializationPair.fromSerializer(objectSerializer);
+	private SerializationPair<Object> objectSerializationPair = SerializationPair.fromSerializer(objectSerializer);
 
 	@Bean
 	@Override
 	public CacheManager cacheManager() {
 		RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(lettuceConnectionFactory);
 		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
-		redisCacheConfiguration.serializeKeysWith(stringSerializationPair).serializeValuesWith(objectSerializationPair)
-				.entryTtl(Duration.ofSeconds(30));
+		redisCacheConfiguration = redisCacheConfiguration.serializeKeysWith(stringSerializationPair);
+		redisCacheConfiguration = redisCacheConfiguration.serializeValuesWith(objectSerializationPair);
+		redisCacheConfiguration = redisCacheConfiguration.entryTtl(Duration.ofSeconds(30));
 		logger.info("redis host " + lettuceConnectionFactory.getHostName() + ":" + lettuceConnectionFactory.getPort());
 		return new RedisCacheManager(redisCacheWriter, redisCacheConfiguration);
 	}
