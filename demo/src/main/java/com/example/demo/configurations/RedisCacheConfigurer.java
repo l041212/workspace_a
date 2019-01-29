@@ -45,7 +45,7 @@ public class RedisCacheConfigurer extends CachingConfigurerSupport {
 		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
 		redisCacheConfiguration = redisCacheConfiguration.serializeKeysWith(stringSerializationPair);
 		redisCacheConfiguration = redisCacheConfiguration.serializeValuesWith(objectSerializationPair);
-		redisCacheConfiguration = redisCacheConfiguration.entryTtl(Duration.ofSeconds(30));
+		redisCacheConfiguration = redisCacheConfiguration.entryTtl(Duration.ofSeconds(3600L));
 		logger.info("redis host " + lettuceConnectionFactory.getHostName() + ":" + lettuceConnectionFactory.getPort());
 		return new RedisCacheManager(redisCacheWriter, redisCacheConfiguration);
 	}

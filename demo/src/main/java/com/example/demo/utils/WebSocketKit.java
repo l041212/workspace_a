@@ -16,9 +16,6 @@ public class WebSocketKit {
 	private static int count = 0;
 	private static final Map<String, Session> SESSION_CACHE = new ConcurrentHashMap<String, Session>();
 
-	private WebSocketKit() {
-	}
-
 	/**
 	 * format: {sender: "senderId", receiver: "receiverId", data: "[{},{}...]"}
 	 * 

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.configurations.RabbitMQConfigurer.DirectConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurers.DirectConfigurer;
 
 @Component
 public class DirectReceiver {

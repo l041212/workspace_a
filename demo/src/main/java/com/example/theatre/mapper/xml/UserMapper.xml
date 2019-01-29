@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.theatre.mapper.UserMapper">
+
+	<resultMap id="baseResultMap" type="com.example.theatre.entity.User">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="BOOLEAN" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="deactivated" property="deactivated" jdbcType="BOOLEAN" />
+		<result column="deleted" property="deleted" jdbcType="BOOLEAN" />
+	</resultMap>
+	
+	<select id="getItemById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+		select * from user where id = #{id, jdbcType=INTEGER} and deleted = 0
+	</select>
+
+	<select id="getItemByUsername" parameterType="java.lang.String" resultMap="baseResultMap">
+		select * from user where username = #{username, jdbcType=VARCHAR} and deleted = 0
+	</select>
+
+	<select id="findItems" parameterType="java.util.Map" resultMap="baseResultMap">
+		select * from user
+		<where>
+			<if test="keywords != null and keywords != ''">
+				and (
+				username like CONCAT('%', #{username}, '%')
+				or
+				password like CONCAT('%', #{password}, '%')
+				or
+				name like CONCAT('%', #{name}, '%')
+				or
+				email like CONCAT('%', #{email}, '%')
+				)
+			</if>
+			 and deleted = 0
+		</where>
+	</select>
+	
+	<insert id="insertItem" parameterType="com.example.theatre.entity.User">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			select last_insert_id()
+		</selectKey>
+		insert into user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="username != null and username != ''">
+				username,
+			</if>
+			<if test="password != null and password != ''">
+				password,
+			</if>
+			<if test="name != null and name != ''">
+				name,
+			</if>
+			<if test="gender != null">
+				gender,
+			</if>
+			<if test="email != null and email != ''">
+				email,
+			</if>
+			<if test="deactivated != null">
+				deactivated,
+			</if>
+			<if test="deleted != null">
+				deleted,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="username != null and username != ''">
+				#{username, jdbcType=VARCHAR},
+			</if>
+			<if test="password != null and password != ''">
+				#{password, jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				#{name, jdbcType=VARCHAR},
+			</if>
+			<if test="gender != null">
+				#{gender, jdbcType=BOOLEAN},
+			</if>
+			<if test="email != null and email != ''">
+				#{email, jdbcType=VARCHAR},
+			</if>
+			<if test="deactivated != null">
+				#{deactivated, jdbcType=BOOLEAN},
+			</if>
+			<if test="deleted != null">
+				#{deleted, jdbcType=BOOLEAN},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateItem" parameterType="com.example.theatre.entity.User">
+		update user
+		<set>
+			<if test="username != null and username != ''">
+				username = #{username, jdbcType=VARCHAR},
+			</if>
+			<if test="password != null and password != ''">
+				password = #{password, jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="gender != null">
+				gender = #{gender, jdbcType=BOOLEAN},
+			</if>
+			<if test="email != null and email != ''">
+				email = #{email, jdbcType=VARCHAR},
+			</if>
+			<if test="deactivated != null">
+				deactivated = #{deleted, jdbcType=BOOLEAN},
+			</if>
+			<if test="deleted != null">
+				deleted = #{deleted, jdbcType=BOOLEAN},
+			</if>
+		</set>
+		where id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<delete id="deleteItem" parameterType="java.lang.Integer">
+		delete from user where id = #{id, jdbcType=INTEGER}
+	</delete>
+
+</mapper>

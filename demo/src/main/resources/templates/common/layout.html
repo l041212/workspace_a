@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 	<head>
 		<meta charset="UTF-8">
 		<title th:text="${title}"></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" th:href="@{/plugin/bootstrap-4.2.1-dist/css/bootstrap.min.css}">
+		<link rel="stylesheet" th:href="@{/style/common/style_a.css}">
 		<style class="style_" th:include="::style_"></style>
 		<script type="text/javascript" th:src="@{/script/jquery-3.3.1.js}"></script>
 		<script type="text/javascript" th:src="@{/plugin/bootstrap-4.2.1-dist/js/bootstrap.min.js}"></script>

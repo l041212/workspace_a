@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" 
+	th:replace="/common/layout">
+	<head th:fragment="style_">
+		<!-- 
+		<link rel="stylesheet" th:href="@{/style/theatre/index.css}">
+		 -->
+	</head>
+	<head th:fragment="script_">
+		<!-- 
+		<script type="text/javascript" th:src="@{/script/theatre/index.js}"></script>
+		 -->
+	</head>
+	<div th:fragment="body_">
+		<div class="testHidden">
+		</div>
+		<div class="container">
+			<shiro:hasPermission name="read:p1"><a href="/userInfo/view">你睇我唔到~<br/>你睇我唔到~<br/>你睇我唔到~<br/></a></shiro:hasPermission>
+			index...
+		</div>
+	</div>
+</html>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.theatre.mapper.RoleMapper">
+
+	<resultMap id="baseResultMap" type="com.example.theatre.entity.Role">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="detail" property="detail" jdbcType="VARCHAR" />
+		<result column="deleted" property="deleted" jdbcType="BOOLEAN" />
+	</resultMap>
+
+	<sql id="roleUserMappingTable">
+		role r
+		left join user_role ur
+		on r.id = ur.role_id
+		left join user u
+		on ur.user_id = u.id
+	</sql>
+	
+	<select id="getItemById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+		select * from role where id = #{id, jdbcType=INTEGER} and deleted = 0
+	</select>
+
+	<select id="findItems" parameterType="java.util.Map" resultMap="baseResultMap">
+		select * from role
+		<where>
+			<if test="keywords != null and keywords != ''">
+				and (
+				code like CONCAT('%', #{code}, '%')
+				or
+				name like CONCAT('%', #{name}, '%')
+				or
+				detail like CONCAT('%', #{detail}, '%')
+				)
+			</if>
+			and deleted = 0
+		</where>
+	</select>
+	
+	<select id="findItemsByUserId" parameterType="java.lang.Integer" resultMap="baseResultMap">
+		select r.* from
+		<include refid="roleUserMappingTable" />
+		where u.id = #{id, jdbcType=INTEGER} and r.deleted = 0 and u.deleted = 0 
+	</select>
+	
+	<insert id="insertItem" parameterType="com.example.theatre.entity.Role">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			select last_insert_id()
+		</selectKey>
+		insert into role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="code != null and code != ''">
+				code,
+			</if>
+			<if test="name != null and name != ''">
+				name,
+			</if>
+			<if test="detail != null and detail != ''">
+				detail,
+			</if>
+			<if test="deleted != null">
+				deleted,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="parentId != null">
+				#{parent_id, jdbcType=INTEGER},
+			</if>
+			<if test="code != null and code != ''">
+				#{code, jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				#{name, jdbcType=VARCHAR},
+			</if>
+			<if test="detail != null and detail != ''">
+				#{detail, jdbcType=VARCHAR},
+			</if>
+			<if test="deleted != null">
+				#{deleted, jdbcType=BOOLEAN},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateItem" parameterType="com.example.theatre.entity.Role">
+		update role
+		<set>
+			<if test="parentId != null">
+				parent_id = #{parent_id, jdbcType=INTEGER},
+			</if>
+			<if test="code != null and code != ''">
+				code = #{code, jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="detail != null and detail != ''">
+				detail = #{detail, jdbcType=VARCHAR},
+			</if>
+			<if test="deleted != null">
+				deleted = #{deleted, jdbcType=BOOLEAN},
+			</if>
+		</set>
+		where id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<delete id="deleteItem" parameterType="java.lang.Integer">
+		delete from role where id = #{id, jdbcType=INTEGER}
+	</delete>
+
+</mapper>

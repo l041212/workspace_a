@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+	th:replace="/common/frame_a">
+	<head th:fragment="style_">
+		<link rel="stylesheet" th:href="@{/style/theatre/login.css}">
+	</head>
+	<head th:fragment="script_">
+		<script type="text/javascript" th:src="@{/script/theatre/login.js}"></script>
+	</head>
+	<div th:fragment="content_">
+		<div class="testHidden">
+		</div>
+		<div class="container">
+			<div id="main" class="card col-md-6 offset-md-6 col-lg-6 offset-lg-6">
+				<form>
+					<div class="form-group">
+						<label for="username"><strong>username: </strong></label>
+						<input type="text" class="form-control" name="username">
+					</div>
+					<div class="form-group">
+						<label for="password"><strong>password: </strong></label>
+						<input type="password" class="form-control" name="password">
+					</div>
+					<div class="form-group">
+						<label for="validate"><strong>validate: </strong></label>
+						<input type="text" class="form-control" name="validate">
+					</div>
+					<div id="menu" class="form-group offset-md-12 col-lg-12">
+						<a id="signIn" href="#" class="btn btn-primary btn-sm" role="button">sign in</a>
+						<a id="signUp" href="#" class="btn btn-success btn-sm" role="button">sign up</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</html>

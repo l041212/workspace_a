@@ -6,4 +6,4 @@ logging:
       springframework:
         web: debug
     com:
-      example: info
+      example: debug

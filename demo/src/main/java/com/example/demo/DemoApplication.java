@@ -11,8 +11,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 @EnableAsync
 @EnableCaching
+@EnableSwagger2
 @EnableScheduling
 @EnableTransactionManagement
 @ComponentScan(basePackages = { "com.example.*" })

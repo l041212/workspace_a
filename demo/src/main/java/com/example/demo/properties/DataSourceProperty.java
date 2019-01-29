@@ -13,6 +13,7 @@ public class DataSourceProperty {
 
 	private HikariDataSource library0;
 	private HikariDataSource library1;
+	private HikariDataSource library2;
 
 	public HikariDataSource getLibrary0() {
 		return library0;
@@ -28,6 +29,14 @@ public class DataSourceProperty {
 
 	public void setLibrary1(HikariDataSource library1) {
 		this.library1 = library1;
+	}
+
+	public HikariDataSource getLibrary2() {
+		return library2;
+	}
+
+	public void setLibrary2(HikariDataSource library2) {
+		this.library2 = library2;
 	}
 
 }

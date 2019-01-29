@@ -28,8 +28,14 @@ public class DataSourceAspect {
 	@Before(value = "targetPointCut() && @annotation(TargetDataSource)", argNames = "JoinPoint, TargetDataSource")
 	public void targetTransfer(JoinPoint point, TargetDataSource annotation) {
 		if (annotation != null && StringUtils.isNotBlank(annotation.label())) {
-			if (DynamicDataSourceContextHolder.isContainsDataSource(annotation.label())) {
-				DynamicDataSourceContextHolder.setDataSource(annotation.label());
+			targetTrasnfer(annotation.label());
+		}
+	}
+
+	public static void targetTrasnfer(String label) {
+		if (StringUtils.isNotBlank(label)) {
+			if (DynamicDataSourceContextHolder.isContainsDataSource(label)) {
+				DynamicDataSourceContextHolder.setDataSource(label);
 				logger.info("DataSource is changed...");
 			}
 		}
@@ -38,6 +44,10 @@ public class DataSourceAspect {
 
 	@After(value = "targetPointCut() && @annotation(TargetDataSource)", argNames = "JoinPoint, TargetDataSource")
 	public void targetCleaner(JoinPoint point, TargetDataSource annotation) {
+		targetCleaner();
+	}
+
+	public static void targetCleaner() {
 		DynamicDataSourceContextHolder.removeDataSoure();
 		logger.info("DataSource is cleaned...");
 		logger.info("DataSource: " + DynamicDataSourceContextHolder.getDataSource());

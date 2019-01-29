@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class ActorTempController {
 	private JdbcTemplate jdbcTemplate;
 
 	@GetMapping("/info")
+	@RequiresPermissions("read:p1")
 	public String info(HttpServletRequest request, Map<String, Object> map) {
 
 		String sql = "select * from actor";

@@ -36,7 +36,7 @@ public class ActorController {
 	private Environment environment;
 
 	@RequestMapping(path = "/helloworld", method = RequestMethod.GET)
-	public void helloWorld(HttpServletRequest request, HttpServletResponse response) throws InstantiationException, IllegalAccessException {
+	public void helloWorld(HttpServletRequest request, HttpServletResponse response) throws InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException {
 
 		logger.info("--------------------------------------");
 		logger.info(environment.getProperty("item.name"));
@@ -54,6 +54,7 @@ public class ActorController {
 			writer.print("count: " + item.getCount() + "\n");
 			writer.println("actor: " + actor.getFirstName() + " " + actor.getLastName());
 			writer.println("city:" + city.getName());
+			
 			/*
 			Actor item = new Actor();
 			item.setFirstName("Ronie");

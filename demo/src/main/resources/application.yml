@@ -9,4 +9,4 @@ spring:
     - redis
     - rabbitmq
     - actuator
-#    - logging
+    - logging

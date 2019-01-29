@@ -13,6 +13,35 @@ function moveFragment() {
 	$(".body_").remove();
 }
 
+function setPopoverBeta(target, hint, direction) {
+	var popover = document.createElement("div");
+	popover.setAttribute("data-container", "body");
+	popover.setAttribute("data-toggle", "popover");
+	popover.setAttribute("data-placement", direction);
+	popover.setAttribute("data-content", hint);
+	$(target).after(popover);
+	$(popover).append(target);
+}
+
+function vaildatorBeta(selector, regex, popover) {
+	var execute = function(popover) {
+		$(popover).popover("show");
+		setTimeout(function() {
+			$(popover).popover("hide");
+		}, 2000);
+	}
+	regex.lastIndex = 0;
+	if (!($(selector) != undefined && $(selector).val() != undefined && $(selector).val() != '')) {
+		execute(popover);
+		return false;
+	}
+	if (regex != undefined && regex != '' && (!regex.test($(selector).val()))) {
+		execute(popover);
+		return false;
+	}
+	return true;
+}
+
 function getPathValue(type, name) {
 	type = type=="url" ? window.location.search.substr(1) : type;
 	type = type=="cookie" ? document.cookie : type;

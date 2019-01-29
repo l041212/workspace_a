@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.configurations.RabbitMQConfigurer.XdelayConfigurer;
+import com.example.demo.configurations.RabbitMQConfigurers.XdelayConfigurer;
 
 @Component
 public class XdelayReceiver {

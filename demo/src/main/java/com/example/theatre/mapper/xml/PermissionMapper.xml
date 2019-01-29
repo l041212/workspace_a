@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.theatre.mapper.PermissionMapper">
+
+	<resultMap id="baseResultMap" type="com.example.theatre.entity.Permission">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="order" property="order" jdbcType="INTEGER" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="deleted" property="deleted" jdbcType="BOOLEAN" />
+	</resultMap>
+	
+	<sql id="permissionRoleMappingTable">
+		permission p
+		left join role_permission rp
+		on p.id = rp.permission_id
+		left join role r
+		on rp.role_id = r.id
+	</sql>
+	
+	<select id="getItemById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+		select * from permission where id = #{id, jdbcType=INTEGER} and deleted = 0
+	</select>
+
+	<select id="findItems" parameterType="java.util.Map" resultMap="baseResultMap">
+		select * from permission
+		<where>
+			<if test="keywords != null and keywords != ''">
+				and (
+				code like CONCAT('%', #{code}, '%')
+				or
+				name like CONCAT('%', #{name}, '%')
+				or
+				url like CONCAT('%', #{url}, '%')
+				)
+			</if>
+			and deleted = 0
+		</where>
+	</select>
+	
+	<select id="findItemsByRoleId" parameterType="java.lang.Integer" resultMap="baseResultMap">
+		select p.* from
+		<include refid="permissionRoleMappingTable" />
+		where r.id = #{id, jdbcType=INTEGER} and p.deleted = 0 and r.deleted = 0
+	</select>
+	
+	<insert id="insertItem" parameterType="com.example.theatre.entity.Permission">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			select last_insert_id()
+		</selectKey>
+		insert into permission
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="code != null and code != ''">
+				code,
+			</if>
+			<if test="name != null and name != ''">
+				name,
+			</if>
+			<if test="order != null">
+				order,
+			</if>
+			<if test="url != null and url != ''">
+				url,
+			</if>
+			<if test="deleted != null">
+				deleted,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="parentId != null">
+				#{parent_id, jdbcType=INTEGER},
+			</if>
+			<if test="code != null and code != ''">
+				#{code, jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				#{name, jdbcType=VARCHAR},
+			</if>
+			<if test="order != null">
+				#{order, jdbcType=INTEGER},
+			</if>
+			<if test="url != null and url != ''">
+				#{url, jdbcType=VARCHAR},
+			</if>
+			<if test="deleted != null">
+				#{deleted, jdbcType=BOOLEAN},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateItem" parameterType="com.example.theatre.entity.Permission">
+		update permission
+		<set>
+			<if test="parentId != null">
+				parent_id = #{parent_id, jdbcType=INTEGER},
+			</if>
+			<if test="code != null and code != ''">
+				code = #{code, jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="order != null">
+				order = #{order, jdbcType=INTEGER},
+			</if>
+			<if test="url != null and url != ''">
+				url = #{url, jdbcType=VARCHAR},
+			</if>
+			<if test="deleted != null">
+				deleted = #{deleted, jdbcType=BOOLEAN},
+			</if>
+		</set>
+		where id = #{id, jdbcType=INTEGER}
+	</update>
+
+	<delete id="deleteItem" parameterType="java.lang.Integer">
+		delete from permission where id = #{id, jdbcType=INTEGER}
+	</delete>
+
+</mapper>
