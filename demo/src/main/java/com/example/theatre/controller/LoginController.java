@@ -24,8 +24,9 @@ public class LoginController {
 	@PostMapping("signIn")
 	public Map<String, Object> signIn(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "username", required = true) String username,
-			@RequestParam(value = "password", required = true) String password) {
-		UsernamePasswordToken token = new UsernamePasswordToken(username, password, true);
+			@RequestParam(value = "password", required = true) String password,
+			@RequestParam(value = "rememberMe", required = true) boolean rememeberMe) {
+		UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememeberMe);
 		Map<String, Object> result = new HashMap<String, Object>();
 		String message = "";
 		try {
