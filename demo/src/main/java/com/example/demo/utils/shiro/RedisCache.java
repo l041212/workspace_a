@@ -26,15 +26,15 @@ import io.micrometer.core.instrument.util.StringUtils;
  * @see https://blog.csdn.net/qq_34021712/article/details/80791219
  *
  */
-public class ShiroRedisCache<K, V> implements Cache<K, V> {
+public class RedisCache<K, V> implements Cache<K, V> {
 
-	private static Logger logger = LoggerFactory.getLogger(ShiroRedisCache.class);
-	private static ShiroRedisManager shiroRedisManager = ShiroRedisManager.getInstance();
+	private static Logger logger = LoggerFactory.getLogger(RedisCache.class);
+	private static RedisManager shiroRedisManager = RedisManager.getInstance();
 	private String keyPrefix = "shiro::unkown::";
 	private String principalIdFieldName = "user";
 	private int expire = 0;
 
-	public ShiroRedisCache(String keyPrefix, String principalIdFieldName, int expire) {
+	public RedisCache(String keyPrefix, String principalIdFieldName, int expire) {
 		if (StringUtils.isNotBlank(keyPrefix)) {
 			this.keyPrefix = keyPrefix;
 		}

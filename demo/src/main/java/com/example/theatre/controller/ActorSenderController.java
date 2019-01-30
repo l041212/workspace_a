@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.configurations.RabbitMQConfigurers.DelayConfigurer;
-import com.example.demo.configurations.RabbitMQConfigurers.DirectConfigurer;
-import com.example.demo.configurations.RabbitMQConfigurers.FanoutConfigurer;
-import com.example.demo.configurations.RabbitMQConfigurers.TopicConfigurer;
-import com.example.demo.configurations.RabbitMQConfigurers.XdelayConfigurer;
+import com.example.demo.configurations.rabbitMQ.DelayConfigurer;
+import com.example.demo.configurations.rabbitMQ.DirectConfigurer;
+import com.example.demo.configurations.rabbitMQ.FanoutConfigurer;
+import com.example.demo.configurations.rabbitMQ.TopicConfigurer;
+import com.example.demo.configurations.rabbitMQ.XdelayConfigurer;
 
 @RestController
 @RequestMapping("/theatre/actorSender")

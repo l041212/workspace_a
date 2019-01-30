@@ -1,4 +1,4 @@
-package com.example.demo.configurations;
+package com.example.demo.configurations.shiro;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,18 +12,20 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
 import com.example.demo.utils.CustomizedRealm;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 
 @Configuration
-public class ShiroConfigurer implements ApplicationContextAware {
+public class WebSecurityConfigurer implements ApplicationContextAware {
 
 	private static ConfigurableApplicationContext applicationContext;
 
@@ -48,6 +50,16 @@ public class ShiroConfigurer implements ApplicationContextAware {
 		filterChainDefinitionMap.put("/theatre/actor/helloworld", "roles[admin]");
 		filterChainDefinitionMap.put("/**", "user");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+	}
+
+	@Bean
+	public FilterRegistrationBean<DelegatingFilterProxy> shiroFilterDelegatingFilterProxy() {
+		FilterRegistrationBean<DelegatingFilterProxy> filterRegistrationBean = new FilterRegistrationBean<DelegatingFilterProxy>();
+		DelegatingFilterProxy proxy = new DelegatingFilterProxy();
+		filterRegistrationBean.setFilter(proxy);
+		proxy.setTargetBeanName("shiroFilter");
+		proxy.setTargetFilterLifecycle(true);
+		return filterRegistrationBean;
 	}
 
 	@Bean

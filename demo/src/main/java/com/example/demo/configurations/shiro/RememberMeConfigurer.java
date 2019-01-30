@@ -1,4 +1,4 @@
-package com.example.demo.configurations;
+package com.example.demo.configurations.shiro;
 
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import com.example.demo.utils.AESCrypt;
 
 @Configuration
-public class ShiroRememberMeConfigurer {
+public class RememberMeConfigurer {
 
 	private static final String AES_SECRET_KEY = "abcddcbaabcddcba";
 	private static final String AES_PLAIN_TEXT = "beijingtianya";

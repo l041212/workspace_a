@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ShiroRedisCacheManager implements CacheManager {
+public class RedisCacheManager implements CacheManager {
 
-	private static final Logger logger = LoggerFactory.getLogger(ShiroRedisCacheManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(RedisCacheManager.class);
 	private static final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>();
 	public static final String DEFAULT_CACHE_KEY_PREFIX = "shiro::cache::";
 	public static final String DEFAULT_PRINCIPAL_ID_FIELD_NAME = "username";
@@ -33,7 +33,7 @@ public class ShiroRedisCacheManager implements CacheManager {
 		logger.debug("get cache, name: ", name);
 		Cache cache = caches.get(name);
 		if (cache == null) {
-			cache = new ShiroRedisCache<K, V>(keyPrefix + name + "::", principalIdFieldName, expire);
+			cache = new RedisCache<K, V>(keyPrefix + name + "::", principalIdFieldName, expire);
 			caches.put(name, cache);
 		}
 		return cache;

@@ -20,22 +20,22 @@ import com.example.demo.DemoApplication;
  * @see https://blog.csdn.net/qq_34021712/article/details/80791219
  *
  */
-public class ShiroRedisManager {
+public class RedisManager {
 
 	private static ConfigurableApplicationContext applicationContext;
 	private static RedisTemplate<String, Object> redisTemplate;
 
 	@SuppressWarnings("unchecked")
-	private ShiroRedisManager() {
+	private RedisManager() {
 		applicationContext = DemoApplication.getApplicationContext();
 		redisTemplate = (RedisTemplate<String, Object>) applicationContext.getBean("redisTemplate");
 	}
 
 	private static class SingletonClassInstance {
-		private static final ShiroRedisManager instance = new ShiroRedisManager();
+		private static final RedisManager instance = new RedisManager();
 	}
 
-	public static ShiroRedisManager getInstance() {
+	public static RedisManager getInstance() {
 		return SingletonClassInstance.instance;
 	}
 

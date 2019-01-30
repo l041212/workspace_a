@@ -1,4 +1,4 @@
-package com.example.theatre.controller.WebSocketServer;
+package com.example.theatre.controller.websocket;
 
 import java.util.Map;
 

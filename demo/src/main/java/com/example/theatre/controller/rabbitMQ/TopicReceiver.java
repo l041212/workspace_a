@@ -1,4 +1,4 @@
-package com.example.theatre.controller.MQReceiver;
+package com.example.theatre.controller.rabbitMQ;
 
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.configurations.RabbitMQConfigurers.TopicConfigurer;
+import com.example.demo.configurations.rabbitMQ.TopicConfigurer;
 
 @Component
 public class TopicReceiver {

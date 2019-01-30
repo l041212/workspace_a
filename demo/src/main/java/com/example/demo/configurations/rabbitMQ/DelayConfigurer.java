@@ -1,4 +1,4 @@
-package com.example.demo.configurations.RabbitMQConfigurers;
+package com.example.demo.configurations.rabbitMQ;
 
 import java.util.HashMap;
 import java.util.Map;
